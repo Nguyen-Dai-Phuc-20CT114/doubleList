@@ -134,10 +134,10 @@
 typedef enum
 {
     // The earlier node, the farther head
-    STACK       =   0,
+    QUEUE       =   0,
 
     // The ealier node, the closer head
-    QUEUE       =   1,
+    STACK       =   1,
 
 } addMode_t;
 
@@ -355,28 +355,16 @@ int get_Index(doubleList_t<data_t> *list, bool (*conTask)(data_t data_));
 
 
 template <class data_t>
-doubleNode_t<data_t> *add_Head(doubleList_t<data_t> *&list, unsigned num = 1, addMode_t addMode = QUEUE, void(*setTask)(data_t &data_) = doNothing);
-
-template <class data_t>
-doubleNode_t<data_t> *add_Head(doubleNode_t<data_t> *&node, unsigned num = 1, addMode_t addMode = QUEUE);
+doubleNode_t<data_t> *add_Head(doubleList_t<data_t> *&list, unsigned num = 1, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing);
 
 template <class data_t>
 doubleNode_t<data_t> *add_Tail(doubleList_t<data_t> *&list, unsigned num = 1, void(*setTask)(data_t &data_) = doNothing);
 
 template <class data_t>
-doubleNode_t<data_t> *add_Tail(doubleNode_t<data_t> *&node, unsigned num = 1, void(*setTask)(data_t &data_) = doNothing);
-
-template <class data_t>
-doubleNode_t<data_t> *add_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, addMode_t addMode = QUEUE, void(*setTask)(data_t &data_) = doNothing);
-
-template <class data_t>
-doubleNode_t<data_t> *add_Before(doubleNode_t<data_t> *&node, unsigned num = 1, addMode_t addMode = QUEUE);
+doubleNode_t<data_t> *add_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing);
 
 template <class data_t>
 doubleNode_t<data_t> *add_After(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, void(*setTask)(data_t &data_) = doNothing);
-
-template <class data_t>
-doubleNode_t<data_t> *add_After(doubleNode_t<data_t> *&node, unsigned num = 1, unsigned pos = 0);
 
 
 
@@ -413,6 +401,9 @@ errDel_t delete_Node(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos
 
 template <class data_t>
 errDel_t delete_All(doubleList_t<data_t> *&list);
+
+template <class data_t>
+errDel_t delete_List(doubleList_t<data_t> *&list);
 
 
 
@@ -456,7 +447,7 @@ void doNothing(data_t &data_);
 
 
 // template <class data_t>
-// doubleNode_t<data_t> *add_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, addMode_t addMode = QUEUE, void(*setTask)(data_t &data_) = doNothing);
+// doubleNode_t<data_t> *add_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing);
 
 // template <class data_t>
 // doubleNode_t<data_t> *add_After(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0);
@@ -501,6 +492,8 @@ doubleList_t<data_t> *create_List(unsigned num = 0, void(*setTask)(data_t &data_
 
 
         doubleList_t<data_t> *list_new  = new doubleList_t();
+        list_new->set_Head(nullptr);
+        list_new->set_Tail(nullptr);
 
         for(int i = 0; i < num; ++i)
         {
@@ -810,15 +803,16 @@ int get_Index(doubleList_t<data_t> *list, bool (*conTask)(data_t data_))
 
 
 /**
- * \fn                  template <class data_t> doubleNode_t<data_t> *add_Head(doubleList_t<data_t> *&list, unsigned num, addMode_t addMode)
+ * \fn                  template <class data_t> doubleNode_t<data_t> *add_Head(doubleList_t<data_t> *&list, unsigned num = 1, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing)
  * \brief               Add new nodes at head of double list
  * \param   list        List is added new head
  * \param   num         Number of nodes will be added
- * \param   addMode     How to add new nodes: STACK or QUEUE
+ * \param   addMode     How to add new nodes: QUEUE or STACK
+ * \param   setTask     Pointer to the function which set data_ of each added node
  * \return              Pointer to head of double list after inserting
 **/
 template <class data_t>
-doubleNode_t<data_t> *add_Head(doubleList_t<data_t> *&list, unsigned num = 1, addMode_t addMode = QUEUE, void(*setTask)(data_t &data_) = doNothing)
+doubleNode_t<data_t> *add_Head(doubleList_t<data_t> *&list, unsigned num = 1, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing)
 {
     #if true
 
@@ -827,9 +821,9 @@ doubleNode_t<data_t> *add_Head(doubleList_t<data_t> *&list, unsigned num = 1, ad
         if(list->get_Tail() == nullptr) {return nullptr;}
         if(num <= 0)                    {return nullptr;}
 
-        if(addMode == QUEUE)
+        if(addMode == STACK)
         {
-            doubleList_t<data_t> *list_new = create_List(num);
+            doubleList_t<data_t> *list_new = create_List(num, setTask);
 
             // tail <-> newList -> nullptr
             link_TwoNode(list->get_Tail(), list_new->get_Head());
@@ -843,12 +837,12 @@ doubleNode_t<data_t> *add_Head(doubleList_t<data_t> *&list, unsigned num = 1, ad
             delete list_new;
         }
 
-        else if(addMode == STACK)
+        else if(addMode == QUEUE)
         {
             for(int i = 1; i <= num; ++i)
             {
                 // tail <- new -> head
-                doubleNode_t<data_t> *node_new = create_Node(list->get_Head(), list->get_Tail());
+                doubleNode_t<data_t> *node_new = create_Node(list->get_Head(), list->get_Tail(), setTask);
 
                 // tail <-> new -> head
                 list->get_Tail->set_Next(node_new);
@@ -868,10 +862,11 @@ doubleNode_t<data_t> *add_Head(doubleList_t<data_t> *&list, unsigned num = 1, ad
 
 
 /**
- * \fn                  template <class data_t> \doubleNode_t<data_t> *add_Tail(doubleList_t<data_t> *&list)
+ * \fn                  template <class data_t> doubleNode_t<data_t> *add_Tail(doubleList_t<data_t> *&list, unsigned num = 1, void(*setTask)(data_t &data_) = doNothing)
  * \brief               Add new nodes at tail of double list
  * \param   list        List is added new tail
  * \param   num         Number of nodes will be added
+ * \param   setTask     Pointer to the function which set data_ of each added node
  * \return              Pointer to tail of double list after inserting
 **/
 template <class data_t>
@@ -887,7 +882,7 @@ doubleNode_t<data_t> *add_Tail(doubleList_t<data_t> *&list, unsigned num = 1, vo
         for(int i = 0; i < num; ++i)
         {
             // tail <- new -> head
-            doubleNode_t<data_t> *node_new = create_Node(list->get_Head(), list->get_Tail());
+            doubleNode_t<data_t> *node_new = create_Node(list->get_Head(), list->get_Tail(), setTask);
 
             // tail <-> new -> head
             list->get_Tail()->set_Next(node_new);
@@ -906,16 +901,17 @@ doubleNode_t<data_t> *add_Tail(doubleList_t<data_t> *&list, unsigned num = 1, vo
 
 
 /**
- * \fn                  template <class data_t> doubleNode_t<data_t> *add_Before(doubleList_t<data_t> *&list, unsigned num, unsigned pos)
+ * \fn                  template <class data_t> doubleNode_t<data_t> *add_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing)
  * \brief               Add new nodes before a specified position
  * \param   list        List is added new nodes
  * \param   num         Number of nodes will be added
  * \param   pos         Position for add nodes
- * \param   addMode     How to add new nodes: STACK or QUEUE
+ * \param   addMode     How to add new nodes: QUEUE or STACK
+ * \param   setTask     Pointer to the function which set data_ of each added node
  * \return              Pointer to final node added
 **/
 template <class data_t>
-doubleNode_t<data_t> *add_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, addMode_t addMode = QUEUE, void(*setTask)(data_t &data_) = doNothing)
+doubleNode_t<data_t> *add_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing)
 {
     #if true
 
@@ -928,23 +924,23 @@ doubleNode_t<data_t> *add_Before(doubleList_t<data_t> *&list, unsigned num = 1, 
 
         if(pos == 0)
         {
-            return add_Head(list, num, addMode);
+            return add_Head(list, num, addMode, setTask);
         }
 
         else
         {
             /*** Get specific node ***/
-            doubleNode_t<data_t> *node_curr = list->get_Head();
+            doubleNode_t<data_t> *node_spec = list->get_Head();
 
-            if(move_Next(list, node_curr, pos) == E_MOV_OVER) {return nullptr;}
+            if(move_Next(list, node_spec, pos) == E_MOV_OVER) {return nullptr;}
 
 
             /*** Get node before specific node ***/
-            doubleNode_t<data_t> *node_befo = node_curr->get_Prev();
+            doubleNode_t<data_t> *node_befo = node_spec->get_Prev();
 
 
             /*** befo <-> the news <-> curr ***/
-            link_TwoNode(node_befo, add_Before(node_curr, num, addMode));
+            link_TwoNode(node_befo, add_Before(node_spec, num, addMode));
 
 
             return node_befo->get_Next();
@@ -955,15 +951,15 @@ doubleNode_t<data_t> *add_Before(doubleList_t<data_t> *&list, unsigned num = 1, 
 
 
 /**
- * \fn                  template <class data_t> doubleNode_t<data_t> *add_Before(doubleNode<data_t> *&node, unsigned num = 1, addMode_t addMode = QUEUE)
+ * \fn                  template <class data_t> doubleNode_t<data_t> *add_Before(doubleNode<data_t> *&node, unsigned num = 1, addMode_t addMode = STACK)
  * \brief               Add new nodes before a specific node
  * \param   node        Specific node
  * \param   num         Number of nodes will be added
- * \param   addMode     How to add new nodes: STACK or QUEUE
+ * \param   addMode     How to add new nodes: QUEUE or STACK
  * \return              Pointer to final node added
 **/
 template <class data_t>
-doubleNode_t<data_t> *add_Before(doubleNode_t<data_t> *&node, unsigned num = 1, addMode_t addMode = QUEUE)
+doubleNode_t<data_t> *add_Before(doubleNode_t<data_t> *&node, unsigned num = 1, addMode_t addMode = STACK)
 {
     #if true
 
