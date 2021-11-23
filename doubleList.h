@@ -939,50 +939,12 @@ doubleNode_t<data_t> *add_Before(doubleList_t<data_t> *&list, unsigned num = 1, 
             doubleNode_t<data_t> *node_befo = node_spec->get_Prev();
 
 
-            /*** befo <-> the news <-> curr ***/
-            link_TwoNode(node_befo, add_Before(node_spec, num, addMode));
+            /*** Create a new list which includes new nodes ***/
+            doubleList_t<data_t> *list_new = create_List()
 
 
             return node_befo->get_Next();
         }
-    
-    #endif
-}
-
-
-/**
- * \fn                  template <class data_t> doubleNode_t<data_t> *add_Before(doubleNode<data_t> *&node, unsigned num = 1, addMode_t addMode = STACK)
- * \brief               Add new nodes before a specific node
- * \param   node        Specific node
- * \param   num         Number of nodes will be added
- * \param   addMode     How to add new nodes: QUEUE or STACK
- * \return              Pointer to final node added
-**/
-template <class data_t>
-doubleNode_t<data_t> *add_Before(doubleNode_t<data_t> *&node, unsigned num = 1, addMode_t addMode = STACK)
-{
-    #if true
-
-        if(node == nullptr) {return nullptr;}
-        if(num <= 0)        {return nullptr;}
-        
-        
-        doubleNode_t<data_t> *node_curr = node;
-
-        for(int i = 0; i < num; ++i) 
-        {
-
-            // nullptr <- new -> curr
-            doubleNode_t<data_t> *node_new = create_Node(node_curr, nullptr);
-
-            // nullptr <- new <-> curr
-            link_TwoNode(node_new, node_curr);
-
-            // nullptr <- curr <-> old
-            node_curr = node_new;
-        }
-
-        return node_curr;
     
     #endif
 }
