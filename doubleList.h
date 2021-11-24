@@ -3,7 +3,7 @@
  *
  * $Author:             Phuc Nguyen
  * $Date:               November 12, 2021
- * $Version:            1.0.0
+ * $Version:            2.1.0
  *
  * File:                doubleList.h
  * Project:             Learning data structures
@@ -16,6 +16,8 @@
  *          4.  Delete:     Delete a existing node
  *          5.  Arrange:    Arrange list
  *          5.  Create:     Create list
+ * 
+ *      When using create_ fucntions, you must add <data_type_t> behind them
 **/
 #ifndef DOUBLE_LIST_H
 #define DOUBLE_LIST_H
@@ -48,7 +50,7 @@
 /* -------------------------------------------------------------------------- */
 
 #ifndef nullptr
-#define nullptr 0
+#define nullptr     0
 #endif
 
 
@@ -131,19 +133,60 @@
 
 
 
+// create modes: FORWARD and REVERSE
 typedef enum
 {
-    // The earlier node, the farther head
-    QUEUE       =   0,
+    // The new node will be added after the specific node
+    FORWARD     =   0,
 
-    // The ealier node, the closer head
-    STACK       =   1,
+    // The new node will be added before the specific node
+    REVERSE     =   1,
+
+} creMode_t;
+
+
+// add modes: STACK and QUEUE
+typedef enum
+{
+    // The ealier node, the farther specific node
+    // First created, last added
+    STACK       =   0,
+
+    // The earlier node, the closer specific node
+    // First created, first added
+    QUEUE       =   1,
 
 } addMode_t;
 
 
 
-// Error when using create list functions
+// Error when using add functions
+typedef enum
+{
+
+    // Function is ok
+    E_ADD_OK    = E_OK,
+
+    // List is not exist
+    E_ADD_LIST  = E_LIST,
+
+    // Head of list is nullptr
+    E_ADD_HEAD  = E_HEAD,
+
+    // Tail of list is nullptr
+    E_ADD_TAIL  = E_TAIL,
+
+    // Number of nodes need to be created is 0
+    E_ADD_NUM   = E_NUM,
+
+    // Argument <position> is invalid
+    E_ADD_POS  = E_POS,
+    
+}errAdd_t;
+
+
+
+// Error when using insert functions
 typedef enum
 {
 
@@ -161,6 +204,9 @@ typedef enum
 
     // Number of nodes need to be created is 0
     E_INS_NUM   = E_NUM,
+
+    // Node is nullptr
+    E_INS_NODE  = E_NODE,
     
 }errIns_t;
 
@@ -319,7 +365,7 @@ template <class data_t>
 doubleNode_t<data_t> *create_Node(doubleNode_t<data_t> *next = nullptr, doubleNode_t<data_t> *prev = nullptr, void (*setTask)(data_t &data_) = doNothing);
 
 template <class data_t>
-doubleList_t<data_t> *create_List(unsigned num = 0, void(*setTask)(data_t &data_) = doNothing);
+doubleList_t<data_t> *create_List(unsigned num = 0, void(*setTask)(data_t &data_) = doNothing, creMode_t creMode = FORWARD);
 
 
 
@@ -342,8 +388,8 @@ doubleNode_t<data_t> *get_Node(doubleList_t<data_t> *list, unsigned pos = 0);
 template <class data_t>
 doubleNode_t<data_t> *get_Node(doubleList_t<data_t> *list, bool(*conTask)(data_t data_), unsigned from = 0);
 
-template <class data_t>
-doubleNode_t<data_t> *get_Tail(doubleList_t<data_t> *list);
+// template <class data_t>
+// doubleNode_t<data_t> *get_Tail(doubleList_t<data_t> *list);
 
 template <class data_t>
 int get_Index(doubleList_t<data_t> *list, doubleNode_t<data_t> node);
@@ -355,16 +401,16 @@ int get_Index(doubleList_t<data_t> *list, bool (*conTask)(data_t data_));
 
 
 template <class data_t>
-doubleNode_t<data_t> *add_Head(doubleList_t<data_t> *&list, unsigned num = 1, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing);
+errAdd_t add_Head(doubleList_t<data_t> *&list, unsigned num = 1, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing);
 
 template <class data_t>
-doubleNode_t<data_t> *add_Tail(doubleList_t<data_t> *&list, unsigned num = 1, void(*setTask)(data_t &data_) = doNothing);
+errAdd_t add_Tail(doubleList_t<data_t> *&list, unsigned num = 1, void(*setTask)(data_t &data_) = doNothing);
 
 template <class data_t>
-doubleNode_t<data_t> *add_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing);
+errAdd_t add_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing);
 
 template <class data_t>
-doubleNode_t<data_t> *add_After(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, void(*setTask)(data_t &data_) = doNothing);
+errAdd_t add_After(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, void(*setTask)(data_t &data_) = doNothing);
 
 
 
@@ -380,6 +426,9 @@ errIns_t insert_Before(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNod
 
 template <class data_t>
 errIns_t insert_After(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode, unsigned pos = 0);
+
+template <class data_t>
+errIns_t insert_List(doubleNode_t<data_t> *node1, doubleNode_t<data_t> *node2, doubleList_t<data_t> *newList);
 
 
 
@@ -418,7 +467,7 @@ template <class data_t>
 void link_TailHead(doubleList_t<data_t> *&list);
 
 template <class data_t>
-void link_TwoNode(doubleNode_t<data_t> *node_1, doubleNode_t<data_t> *node_2);
+void link_TwoNode(doubleNode_t<data_t> *node1, doubleNode_t<data_t> *node2);
 
 
 
@@ -447,10 +496,10 @@ void doNothing(data_t &data_);
 
 
 // template <class data_t>
-// doubleNode_t<data_t> *add_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing);
+// errAdd_t add_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing);
 
 // template <class data_t>
-// doubleNode_t<data_t> *add_After(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0);
+// errAdd_t add_After(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0);
 
 
 
@@ -501,14 +550,15 @@ doubleNode_t<data_t> *create_Node(doubleNode_t<data_t> *next = nullptr, doubleNo
 
 
 /**
- * \fn                  template <class data_t> doubleList_t<data_t> *create_List(unsigned num = 0, void(*setTask)(data_t &data_) = doNothing)
+ * \fn                  template <class data_t> doubleList_t<data_t> *create_List(unsigned num = 0, void(*setTask)(data_t &data_) = doNothing, creMode_t creMode = FORWARD)
  * \brief               Create a brand new list having num nodes
  * \param   num         Number of nodes will be created
  * \param   setTask     Pointer to a function which set data_ for each node
- * \return              Errors when using create list functions
+ * \param   addMode     FORWARD or REVERSE
+ * \return              Pointer to the last added node
 **/
 template <class data_t>
-doubleList_t<data_t> *create_List(unsigned num = 0, void(*setTask)(data_t &data_) = doNothing)
+doubleList_t<data_t> *create_List(unsigned num = 0, void(*setTask)(data_t &data_) = doNothing, creMode_t creMode = FORWARD)
 {
     #if true
 
@@ -521,7 +571,7 @@ doubleList_t<data_t> *create_List(unsigned num = 0, void(*setTask)(data_t &data_
 
         for(int i = 0; i < num; ++i)
         {
-            doubleNode_t<data_t> *node_new = create_Node(nullptr, nullptr, setTask);
+            doubleNode_t<data_t> *node_new = create_Node<data_t>(nullptr, nullptr, setTask);
 
             // If new node is the first node in the list
             if(list_new->get_Head() == nullptr)
@@ -539,8 +589,20 @@ doubleList_t<data_t> *create_List(unsigned num = 0, void(*setTask)(data_t &data_
                 // tail <-> new <-> head
                 link_TwoNode(node_new, list_new->get_Head());
 
-                // oldTail <-> tail <-> head
-                list_new->set_Tail(node_new);
+                // Add new node after the tail
+                if(creMode == FORWARD)
+                {
+                    // oldTail <-> tail <-> head
+                    list_new->set_Tail(node_new);
+                }
+
+                // if(creMode == REVERSE)
+                // Add new node before the head
+                else
+                {
+                    // tail <-> newHead <-> oldHead
+                    list_new->set_Head(node_new);
+                }
             }
         }
 
@@ -631,7 +693,7 @@ void arrange_List(doubleList_t<data_t> *list, bool (*conTask)(data_t data1_, dat
                 node_2 = node_2->get_Next();
 
             } 
-            while(node_2 != node_1);
+            while(node_2 != list->get_Head());
 
 
             node_1 = node_1->get_Next();
@@ -686,7 +748,14 @@ doubleNode_t<data_t> *get_Node(doubleList_t<data_t> *list, bool(*conTask)(data_t
 {
     #if true
 
-        doubleNode_t<data_t> *node_curr = get_Node(list->get_Head(), from);
+        /*** Get node at <from> ***/
+
+        doubleNode_t<data_t> *node_curr = list->get_Head();
+        
+        if(move_Next(list, node_curr, from) == E_MOV_OVER) {return nullptr;}
+
+
+        /*** Find node base on conTask (condition task) ***/
 
         bool cond = (*conTask)(node_curr->data_);
         
@@ -696,6 +765,9 @@ doubleNode_t<data_t> *get_Node(doubleList_t<data_t> *list, bool(*conTask)(data_t
             cond = (*conTask)(node_curr->data_);
         }
 
+
+        /*** Return wanted node if it's exist ***/
+
         if(cond) {return node_curr;}
 
         return nullptr;
@@ -704,31 +776,31 @@ doubleNode_t<data_t> *get_Node(doubleList_t<data_t> *list, bool(*conTask)(data_t
 }
 
 
-/**
- * \fn                  template <class data_t> doubleNode_t<data_t> *get_Tail(doubleList_t<data_t> *list)
- * \brief               Get pointer to tail of double list
- * \param   list        List include wanted tail
- * \return              Pointer to tail of double list
-**/
-template <class data_t>
-doubleNode_t<data_t> *get_Tail(doubleList_t<data_t> *list)
-{
-    #if true
+// /**
+//  * \fn                  template <class data_t> doubleNode_t<data_t> *get_Tail(doubleList_t<data_t> *list)
+//  * \brief               Get pointer to tail of double list
+//  * \param   list        List include wanted tail
+//  * \return              Pointer to tail of double list
+// **/
+// template <class data_t>
+// doubleNode_t<data_t> *get_Tail(doubleList_t<data_t> *list)
+// {
+//     #if true
 
-        if(list == nullptr)             {return nullptr;}
-        if(list->get_Head() == nullptr) {return nullptr;}
+//         if(list == nullptr)             {return nullptr;}
+//         if(list->get_Head() == nullptr) {return nullptr;}
 
-        doubleNode_t<data_t> *tail = list->get_Head();
+//         doubleNode_t<data_t> *tail = list->get_Head();
 
-        while(tail->get_Next() != list->get_Head())
-        {
-            tail = tail->get_Next();
-        }
+//         while(tail->get_Next() != list->get_Head())
+//         {
+//             tail = tail->get_Next();
+//         }
 
-        return tail;
+//         return tail;
     
-    #endif
-}
+//     #endif
+// }
 
 
 /**
@@ -744,7 +816,8 @@ int get_Index(doubleList_t<data_t> *list, doubleNode_t node)
     #if true
 
         if(list == nullptr)             {return -1;}
-        if(list->get_Head() == nullptr) {return -1;}
+        if(list->get_Head() == nullptr) {return -2;}
+        if(list->get_Tail() == nullptr) {return -3;}
 
         doubleNode_t<data_t> *node_curr = list->get_Head();
 
@@ -777,7 +850,8 @@ int get_Index(doubleList_t<data_t> *list, bool (*conTask)(data_t data_))
     #if true
 
         if(list == nullptr)             {return -1;}
-        if(list->get_Head() == nullptr) {return -1;}
+        if(list->get_Head() == nullptr) {return -2;}
+        if(list->get_Tail() == nullptr) {return -3;}
 
         doubleNode_t<data_t> *node_curr = list->get_Head();
 
@@ -803,125 +877,199 @@ int get_Index(doubleList_t<data_t> *list, bool (*conTask)(data_t data_))
 
 
 /**
- * \fn                  template <class data_t> doubleNode_t<data_t> *add_Head(doubleList_t<data_t> *&list, unsigned num = 1, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing)
+ * \fn                  template <class data_t> errAdd_t add_Head(doubleList_t<data_t> *&list, unsigned num = 1, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing)
  * \brief               Add new nodes at head of double list
  * \param   list        List is added new head
  * \param   num         Number of nodes will be added
  * \param   addMode     How to add new nodes: QUEUE or STACK
  * \param   setTask     Pointer to the function which set data_ of each added node
- * \return              Pointer to head of double list after inserting
+ * \return              Error when using this function
 **/
 template <class data_t>
-doubleNode_t<data_t> *add_Head(doubleList_t<data_t> *&list, unsigned num = 1, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing)
+errAdd_t add_Head(doubleList_t<data_t> *&list, unsigned num = 1, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing)
 {
     #if true
 
-        if(list == nullptr)             {return nullptr;}
-        if(list->get_Head() == nullptr) {return nullptr;}
-        if(list->get_Tail() == nullptr) {return nullptr;}
-        if(num <= 0)                    {return nullptr;}
+        if(list == nullptr) {return E_ADD_LIST;}
+        if(num <= 0)        {return E_ADD_NUM;}
 
-        if(addMode == STACK)
+
+        /**
+         * Create a new list including new nodes
+         * 
+         * ***************************************************
+         * addMode == STACK
+         *    - New list is like: node_1 <-> node_2 <-> node_3
+         *    - So create mode is FORWARD
+         *    - STACK == FORWARD == 0
+         * 
+         * addMode == QUEUE
+         *    - New list is like: node_3 <-> node_2 <-> node_1
+         *    - So create mode is REVERSE
+         *    - QUEUE == REVERSE == 1
+         *
+        **/
+        doubleList_t<data_t> *list_new = create_List<data_t>(num, setTask, (creMode_t)addMode);
+
+
+        /**
+         * Add the list of new nodes before the head of origin list
+         * 
+         * ************************************************
+         * If the origin list doesn't have any node
+         *    - Its head is head of new list
+         *    - Its tail is tail of new list
+         * 
+         * If the origin list has only 1 node
+         *    - Insert new list before head of origin list
+         *    - Its head is head of new list
+         *    - Its tail is not changed
+         * 
+         * If the origin list has many nodes
+         *    - Insert new list between tail and head of origin list
+         *    - Head of new list is new head of origin list now
+         * 
+        **/
+
+        // If the origin list doesn't have any node
+        if(list->get_Head == nullptr)
         {
-            doubleList_t<data_t> *list_new = create_List(num, setTask);
+           list->set_Head(list_new->get_Head());
+           list->set_Tail(list_new->get_Tail());
+        }
 
-            // tail <-> newList -> nullptr
-            link_TwoNode(list->get_Tail(), list_new->get_Head());
-
-            // tail <-> newList <-> head
+        // If the origin list has only 1 node
+        else if(list->get_Head() == list->get_Tail())
+        {
+            //             tail
+            // newList <-> head
             link_TwoNode(list_new->get_Tail(), list->get_Head());
 
-            // tail <-> newHead
+            //                     tail
+            // newHead <-> ... <-> oldHead
             list->set_Head(list_new->get_Head());
 
-            delete list_new;
+            // tail <-> newHead
+            link_TailHead(list);
         }
 
-        else if(addMode == QUEUE)
+        // If the origin list has many nodes
+        else
         {
-            for(int i = 1; i <= num; ++i)
-            {
-                // tail <- new -> head
-                doubleNode_t<data_t> *node_new = create_Node(list->get_Head(), list->get_Tail(), setTask);
+            // tail <-> newList <-> head
+            insert_List(list->get_Tail(), list->get_Head(), list_new);
 
-                // tail <-> new -> head
-                list->get_Tail->set_Next(node_new);
-
-                // tail <-> new <-> head
-                list->get_Head()->set_Prev(node_new);
-
-                // tail <-> head <-> old
-                list->set_Head(node_new);
-            }
+            // tail <-> newHead <-> ... <-> oldHead
+            list->set_Head(list_new->get_Head());
         }
 
-        return list->get_Head();
+        delete list_new;
+        return E_ADD_OK;
 
     #endif
 }
 
 
 /**
- * \fn                  template <class data_t> doubleNode_t<data_t> *add_Tail(doubleList_t<data_t> *&list, unsigned num = 1, void(*setTask)(data_t &data_) = doNothing)
+ * \fn                  template <class data_t> errAdd_t add_Tail(doubleList_t<data_t> *&list, unsigned num = 1, void(*setTask)(data_t &data_) = doNothing)
  * \brief               Add new nodes at tail of double list
  * \param   list        List is added new tail
  * \param   num         Number of nodes will be added
  * \param   setTask     Pointer to the function which set data_ of each added node
- * \return              Pointer to tail of double list after inserting
+ * \return              Error when using this function
 **/
 template <class data_t>
-doubleNode_t<data_t> *add_Tail(doubleList_t<data_t> *&list, unsigned num = 1, void(*setTask)(data_t &data_) = doNothing)
+errAdd_t add_Tail(doubleList_t<data_t> *&list, unsigned num = 1, void(*setTask)(data_t &data_) = doNothing)
 {
     #if true
 
-        if(list == nullptr)           {return nullptr;}
-        if(list->get_Head == nullptr) {return nullptr;}
-        if(list->get_Tail == nullptr) {return nullptr;}
-        if(num <= 0)                  {return nullptr;}  
+        if(list == nullptr) {return E_ADD_LIST;}
+        if(num <= 0)        {return E_ADD_NUM;}  
 
-        for(int i = 0; i < num; ++i)
+        // Create a new list including new nodes
+        doubleList_t<data_t> *list_new = create_List(num, setTask, FORWARD);
+
+
+        /*** Add the list of new nodes after the tail of origin list **/
+        /* 
+         * ************************************************
+         * If the origin list doesn't have any node
+         *    - Its head is head of new list
+         *    - Its tail is tail of new list
+         * 
+         * If the origin list has only 1 node
+         *    - Insert new list after tail of origin list
+         *    - Its head is not changed
+         *    - Its tail is tail of new list
+         * 
+         * If the origin list has many nodes
+         *    - Insert new list between tail and head of origin list
+         *    - Tail of new list is new tail of origin list now
+         * 
+        **/
+
+        // If the origin list doesn't have any node
+        if(list->get_Head == nullptr)
         {
-            // tail <- new -> head
-            doubleNode_t<data_t> *node_new = create_Node(list->get_Head(), list->get_Tail(), setTask);
-
-            // tail <-> new -> head
-            list->get_Tail()->set_Next(node_new);
-
-            // tail <-> new <-> head
-            list->get_Head()->set_Prev(node_new);
-
-            // oldTail <-> tail <-> head
-            list->set_Tail(node_new);
+           list->set_Head(list_new->get_Head());
+           list->set_Tail(list_new->get_Tail());
         }
 
-        return list->get_Tail();
+        // If the origin list has only 1 node
+        else if(list->get_Head() == list->get_Tail())
+        {
+            // head
+            // tail <-> newList
+            link_TwoNode(list->get_Tail(), list_new->get_Head());
+
+            // head
+            // oldTail <-> ... <-> newTail
+            list->set_Head(list_new->get_Head());
+
+            // newTail <-> head
+            link_TailHead(list);
+        }
+
+        // If the origin list has many nodes
+        else
+        {
+            // tail <-> newList <-> head
+            insert_List(list->get_Tail(), list->get_Head(), list_new);
+
+            // oldTail <-> ... <-> newTail <-> head
+            list->set_Tail(list_new->get_Tail());
+        }
+
+        delete list_new;
+        return E_ADD_OK;
 
     #endif
 }
 
 
 /**
- * \fn                  template <class data_t> doubleNode_t<data_t> *add_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing)
+ * \fn                  template <class data_t> errAdd_t add_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing)
  * \brief               Add new nodes before a specified position
  * \param   list        List is added new nodes
  * \param   num         Number of nodes will be added
  * \param   pos         Position for add nodes
  * \param   addMode     How to add new nodes: QUEUE or STACK
  * \param   setTask     Pointer to the function which set data_ of each added node
- * \return              Pointer to final node added
+ * \return              Error when using this function
 **/
 template <class data_t>
-doubleNode_t<data_t> *add_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing)
+errAdd_t add_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing)
 {
     #if true
 
-        if(list == nullptr)             {return nullptr;}
-        if(list->get_Head() == nullptr) {return nullptr;}
-        if(list->get_Tail() == nullptr) {return nullptr;}
-        if(num <= 0)                    {return nullptr;}
-        if(pos <  0)                    {return nullptr;}
+        if(list == nullptr)             {return E_ADD_LIST;}
+        if(list->get_Head() == nullptr) {return E_ADD_HEAD;}
+        if(list->get_Tail() == nullptr) {return E_ADD_TAIL;}
+        if(num <= 0)                    {return E_ADD_NUM; }
+        if(pos <  0)                    {return E_ADD_POS; }
 
 
+        // The specific node is head of origin list
         if(pos == 0)
         {
             return add_Head(list, num, addMode, setTask);
@@ -932,18 +1080,34 @@ doubleNode_t<data_t> *add_Before(doubleList_t<data_t> *&list, unsigned num = 1, 
             /*** Get specific node ***/
             doubleNode_t<data_t> *node_spec = list->get_Head();
 
-            if(move_Next(list, node_spec, pos) == E_MOV_OVER) {return nullptr;}
+            if(move_Next(list, node_spec, pos) == E_MOV_OVER) {return E_ADD_POS;}
 
 
             /*** Get node before specific node ***/
-            doubleNode_t<data_t> *node_befo = node_spec->get_Prev();
+            doubleNode_t<data_t> *node_prev = node_spec->get_Prev();
 
 
-            /*** Create a new list which includes new nodes ***/
-            doubleList_t<data_t> *list_new = create_List()
+            /*** Create a new list including new nodes ***/
+            /* 
+             * ***************************************************
+             * addMode == STACK
+             *    - New list is like: node_1 <-> node_2 <-> node_3
+             *    - So create mode is FORWARD
+             *    - STACK == FORWARD == 0
+             * 
+             * addMode == QUEUE
+             *    - New list is like: node_3 <-> node_2 <-> node_1
+             *    - So create mode is REVERSE
+             *    - QUEUE == REVERSE == 1
+             *
+            **/
+            doubleList_t<data_t> *list_new = create_List<data_t>(num, setTask, (creMode_t)addMode);
 
+            /*** Insert the new list between the previous specific node and specific node ***/
+            insert_List(node_prev, node_spec, list_new);
 
-            return node_befo->get_Next();
+            delete list_new;
+            return E_ADD_OK;
         }
     
     #endif
@@ -951,133 +1115,58 @@ doubleNode_t<data_t> *add_Before(doubleList_t<data_t> *&list, unsigned num = 1, 
 
 
 /**
- * \fn                  template <class data_t> doubleNode_t<data_t> *add_After(doubleList_t<data_t> *&list, unsigned num=1, unsigned pos=0)
+ * \fn                  template <class data_t> errAdd_t add_After(doubleList_t<data_t> *&list, unsigned num=1, unsigned pos=0)
  * \brief               Add new nodes after a specific position
  * \param   list        List is added new nodes
  * \param   num         Number of nodes will be added
  * \param   pos         Position for add nodes
- * \return              Pointer to final node added
+ * \param   setTask     Pointer to the function which set data_ of each added node
+ * \return              Error when using this function
 **/
 template <class data_t>
-doubleNode_t<data_t> *add_After(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, void(*setTask)(data_t &data_) = doNothing)
+errAdd_t add_After(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, void(*setTask)(data_t &data_) = doNothing)
 {
     #if true
 
-        if(list->get_Head() == nullptr) {return nullptr;}
-        if(list->get_Tail() == nullptr) {return nullptr;}
-        if(num <= 0)                    {return nullptr;}
-        if(pos <  0)                    {return nullptr;}
-
-    
-    // if(pos == 0)
-    // {
-    //     if(list->get_Head() == tail)
-    //     {
-    //         return add_Tail(tail, num);
-    //     }
-
-    //     else
-    //     {
-    //         doubleNode_t<data_t> *node_head = nullptr;
-    //         doubleNode_t<data_t> *doubleNode_tail = create_List(node_head, num);
-
-    //         // sub-list tail is linked to 1th node of old list
-    //         list_new->get_Tail()->set_Next(head->get_Next());
-
-    //         // First node of old list is linked to sub-list head
-    //         head->set_Next(node_head);
-
-    //         return doubleNode_tail;
-
-    //     }
-    // }
-
-    // pos > 0
-    // else
-    // {
-        doubleNode_t<data_t> *node_curr = list->get_Head();
-
-        int i = 0;
-        while(i < pos && node_curr->get_Next() != list->get_Head())
-        {
-            node_curr = node_curr->get_Next();
-            ++i;
-        }
-
-        if(node_curr->get_Next() == list->get_Head())
-        {
-            // pos is tail of double list
-            if(i == pos)
-            {
-                return add_Tail(tail, num);
-            }
-
-            // pos > number of nodes
-            else
-            {
-                return nullptr;
-            }
-        }
-
-        else
-        {
-            doubleNode_t<data_t> *node_next = node_curr->get_Next();
-
-            doubleNode_t<data_t> *temp = add_Tail(node_curr, num);
-
-            temp->set_Next(node_next);
-
-            return temp;
-        }
-    // }
-
-    #endif
-}
-
-
-/**
- * \fn                  template <class data_t> doubleNode_t<data_t> *add_After(doubleNode_t<data_t> *&node, unsigned num=1, unsigned pos=0)
- * \brief               Add new nodes after a specific position
- * \param   node        Specific node
- * \param   num         Number of nodes will be added
- * \param   pos         Position for add nodes
- * \return              Pointer to final node added
-**/
-template <class data_t>
-doubleNode_t<data_t> *add_After(doubleNode_t<data_t> *&node, unsigned num = 1, unsigned pos = 0)
-{
-    #if true
-
-        if(node == nullptr) {return nullptr;}
-        if(num <= 0)        {return nullptr;}
-        if(pos <  0)        {return nullptr;}
-
+        if(list == nullptr)             {return E_ADD_LIST;}
+        if(list->get_Head() == nullptr) {return E_ADD_HEAD;}
+        if(list->get_Tail() == nullptr) {return E_ADD_TAIL;}
+        if(num <= 0)                    {return E_ADD_NUM; }
+        if(pos <  0)                    {return E_ADD_POS; }
         
+
+
         /*** Get specific node ***/
-        doubleNode_t<data_t> *node_curr = node;
-        errMov_t errMove = move_Next(list, node_curr, pos);
+
+        doubleNode_t<data_t> *node_spec = list->get_Head();
+
+        errMov_t errMove = move_Next(list, node_spec, pos);
+
+        if(errMove == E_MOV_OVER) {return E_ADD_POS;}
 
 
 
-        /*** pos > number of nodes ***/
-        if(errMove == E_MOV_OVER) {return nullptr;}
+        /*** The specific node is tail of origin list ***/
+        if(errMove == W_MOV_TAIL)
+        {
+            return add_Tail(list, num, setTask);
+        }
 
 
-        /*** pos <= number of node ***/
 
-        // curr   the news
-        doubleList_t<data_t> *list_new;
-        create_List(list_new, num);
+        /*** The specific node isn't tail of origin list ***/
 
-        // curr   the news   next
-        doubleNode_t<data_t> *node_next = node_curr->get_Next();
+        // Get the node after specific node
+        doubleNode_t<data_t> *node_next = node_spec->get_Next();
 
-        // curr <-> the news   next
-        link_TwoNode(node_curr, list_new->get_Head());
+        // Create a list including new nodes
+        doubleList_t<data_t> *list_new = create_List(num, setTask, FORWARD);
 
-        // curr <-> the news <-> next
-        link_TwoNode(list_new->get_Tail(), node_next);
-        
+        // Insert the new list between the previous specific node and specific node
+        insert_List(node_spec, node_next, list_new);
+
+        delete list_new;
+        return E_ADD_OK;
 
     #endif
 }
@@ -1167,12 +1256,12 @@ errIns_t insert_Before(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNod
 
 
         doubleNode_t<data_t> *node_curr = list->get_Head();
-        doubleNode_t<data_t> *node_befo = head;
+        doubleNode_t<data_t> *node_prev = head;
 
         int i = 0;
         while(i < pos && node_curr->get_Next() != list->get_Head())
         {
-            node_befo = node_curr;
+            node_prev = node_curr;
             node_curr = node_curr->get_Next();
             ++i;
         }
@@ -1186,7 +1275,7 @@ errIns_t insert_Before(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNod
         doubleNode_t<data_t> *node_new = new doubleNode_t<data_t>();
         node_new = newNode;
 
-        node_befo->set_Next(node_new);
+        node_prev->set_Next(node_new);
         node_new->set_Next(node_curr);
 
         return E_INS_OK;
@@ -1198,8 +1287,7 @@ errIns_t insert_Before(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNod
 /**
  * \fn                  template <class data_t> errIns_t insert_After(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode, unsigned pos = 0)
  * \brief               Insert an existing node after specific node in the list
- * \param   list           List includes
- * \param   list        List includes
+ * \param   list        List includes newNode
  * \param   newNode     Node is inserted
  * \param   pos         newNode is inserted after this position
  * \return              Error when using insert functions
@@ -1264,6 +1352,37 @@ errIns_t insert_After(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode
 }
 
 
+/**
+ * \fn                  template <class data_t> errIns_t insert_List(doubleNode_t<data_t> *node1, doubleNode_t<data_t> *node2, doubleList_t<data_t> *newList)
+ * \brief               Insert an existing list between node1 and node2
+ * \param   node1       New list is insert after   node 1
+ * \param   node2       New list is insert before  node 2
+ * \param   newList     New list is insert between node 1 and node 2
+ * \return              Error when using insert functions
+**/
+template <class data_t>
+errIns_t insert_List(doubleNode_t<data_t> *node1, doubleNode_t<data_t> *node2, doubleList_t<data_t> *newList)
+{
+    #if true
+
+        if(node1             == nullptr) {return E_INS_NODE;}
+        if(node2             == nullptr) {return E_INS_NODE;}
+        if(newList           == nullptr) {return E_INS_LIST;}
+        if(newList->get_Head == nullptr) {return E_INS_HEAD;}
+        if(newList->get_Tail == nullptr) {return E_INS_TAIL;}
+
+        // node1 <-> newList     node2
+        link_TwoNode(node1, newList->get_Head());
+
+        // node1 <-> newList <-> node2
+        link_TwoNode(newList->get_Tail(), node2);
+
+        return E_INS_OK;
+
+    #endif
+}
+
+
 
 /* ---------------------------------------------------------------- */
 
@@ -1299,15 +1418,15 @@ errDel_t delete_Head(doubleList_t<data_t> *&list, unsigned num = 1)
 
     else
     {
-        doubleNode_t<data_t> *node_befo = head;
+        doubleNode_t<data_t> *node_prev = head;
         doubleNode_t<data_t> *node_curr = list->get_Head();
 
         int i = 0;
         while(node_curr != nullptr && i < num)
         {
-            node_befo = node_curr;
+            node_prev = node_curr;
             node_curr = node_curr->get_Next();
-            delete node_befo;
+            delete node_prev;
             ++i;
         }
                     
@@ -1355,17 +1474,17 @@ errDel_t delete_Tail(doubleList_t<data_t> *&list, unsigned num = 1)
 
             else
             {
-                doubleNode_t<data_t> *node_befo = head;
+                doubleNode_t<data_t> *node_prev = head;
                 doubleNode_t<data_t> *node_curr = list->get_Head();
 
                 while(node_curr->get_Next() != list->get_Head())
                 {
-                    node_befo = node_curr;
+                    node_prev = node_curr;
                     node_curr = node_curr->get_Next();
                 }
                         
-                node_befo->set_Next(nullptr);
-                tail = node_befo;
+                node_prev->set_Next(nullptr);
+                tail = node_prev;
                 delete node_curr;
             }
         }
@@ -1479,25 +1598,25 @@ errDel_t delete_Node(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos
 
             else if(pos == 0)
             {
-                doubleNode_t<data_t> *node_befo = head;
+                doubleNode_t<data_t> *node_prev = head;
                 doubleNode_t<data_t> *node_curr = list->get_Head();
 
-                node_befo = node_curr;
+                node_prev = node_curr;
                 node_curr = node_curr->get_Next();
-                delete node_befo;
+                delete node_prev;
 
                 head = node_curr; 
             }
 
             else 
             {
-                doubleNode_t<data_t> *node_befo = head;
+                doubleNode_t<data_t> *node_prev = head;
                 doubleNode_t<data_t> *node_curr = list->get_Head();
 
                 int i = 0;
                 while(node_curr->get_Next() != list->get_Head() && i < pos)
                 {
-                    node_befo = node_curr;
+                    node_prev = node_curr;
                     node_curr = node_curr->get_Next();
                     ++i;
                 }
@@ -1508,15 +1627,15 @@ errDel_t delete_Node(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos
 
                     else if(i == pos)
                     {
-                        node_befo->set_Next(nullptr);
-                        tail = node_befo;
+                        node_prev->set_Next(nullptr);
+                        tail = node_prev;
                         delete node_curr;
                     }
                 }
 
                 else
                 {
-                    node_befo->set_Next(node_curr->get_Next());
+                    node_prev->set_Next(node_curr->get_Next());
                     delete node_curr;                        
                 }
             }
@@ -1847,19 +1966,19 @@ void link_TailHead(doubleList_t<data_t> *&list)
 
 
 /**
- * \fn                  template <class data_t> void link_TwoNode(doubleNode_t<data_t> *node_1, doubleNode_t<data_t> *node_2)
- * \brief               Create a double link between node_1 and node_2
- * \param   node_1      Node 1
- * \param   node_2      Node 2
+ * \fn                  template <class data_t> void link_TwoNode(doubleNode_t<data_t> *node1, doubleNode_t<data_t> *node2)
+ * \brief               Create a double link between node1 and node2
+ * \param   node1      Node 1
+ * \param   node2      Node 2
  * \return              void
 **/
 template <class data_t>
-void link_TwoNode(doubleNode_t<data_t> *node_1, doubleNode_t<data_t> *node_2)
+void link_TwoNode(doubleNode_t<data_t> *node1, doubleNode_t<data_t> *node2)
 {
     #if true
 
-        node_1->set_Next(node_2);
-        node_2->set_Prev(node_1);
+        node1->set_Next(node2);
+        node2->set_Prev(node1);
 
     #endif
 }

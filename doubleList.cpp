@@ -3,7 +3,7 @@
  * 
  * $Author:             Phuc Nguyen
  * $Date:               November 12, 2021
- * $Version:            1.0.0
+ * $Version:            2.1.0
  * 
  * File:                double_list.cpp
  * Project:             learning data structures
