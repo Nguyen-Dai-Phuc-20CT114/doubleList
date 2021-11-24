@@ -316,10 +316,10 @@ class doubleList_t
 
 
 template <class data_t>
-doubleList_t<data_t> *create_List(unsigned num = 0, void(*setTask)(data_t &data_) = doNothing);
+doubleNode_t<data_t> *create_Node(doubleNode_t<data_t> *next = nullptr, doubleNode_t<data_t> *prev = nullptr, void (*setTask)(data_t &data_) = doNothing);
 
 template <class data_t>
-doubleNode_t<data_t> *create_Node(doubleNode_t<data_t> *next = nullptr, doubleNode_t<data_t> *prev = nullptr, void (*setTask)(data_t &data_) = doNothing);
+doubleList_t<data_t> *create_List(unsigned num = 0, void(*setTask)(data_t &data_) = doNothing);
 
 
 
@@ -477,6 +477,30 @@ void doNothing(data_t &data_);
 
 
 /**
+ * \fn                  template <class data_t> doubleNode_t<data_t> *create_Node(doubleNode_t<data_t> *next = nullptr, doubleNode_t<data_t> *prev = nullptr, void(*setTask)(data_t &data_) = doNothing)
+ * \brief               Create a brand new node and set next_, prev_ for it
+ * \param   next        Pointer to next node
+ * \param   prev        Pointer to previous node
+ * \param   setTask     Pointer to the function which set data_ for this node
+ * \return              Pointer to node which is create
+**/
+template <class data_t>
+doubleNode_t<data_t> *create_Node(doubleNode_t<data_t> *next = nullptr, doubleNode_t<data_t> *prev = nullptr, void(*setTask)(data_t &data_) = doNothing)
+{
+    #if true
+
+        doubleNode_t<data_t> *node_new = new doubleNode_t<data_t>();
+        node_new->set_Next(next);
+        node_new->set_Prev(prev);
+        (*setTask)(node_new->data_);
+
+        return node_new;
+
+    #endif
+}
+
+
+/**
  * \fn                  template <class data_t> doubleList_t<data_t> *create_List(unsigned num = 0, void(*setTask)(data_t &data_) = doNothing)
  * \brief               Create a brand new list having num nodes
  * \param   num         Number of nodes will be created
@@ -521,30 +545,6 @@ doubleList_t<data_t> *create_List(unsigned num = 0, void(*setTask)(data_t &data_
         }
 
         return list_new;
-
-    #endif
-}
-
-
-/**
- * \fn                  template <class data_t> doubleNode_t<data_t> *create_Node(doubleNode_t<data_t> *next = nullptr, doubleNode_t<data_t> *prev = nullptr, void(*setTask)(data_t &data_) = doNothing)
- * \brief               Create a brand new node and set next_, prev_ for it
- * \param   next        Pointer to next node
- * \param   prev        Pointer to previous node
- * \param   setTask     Pointer to the function which set data_ for this node
- * \return              Pointer to node which is create
-**/
-template <class data_t>
-doubleNode_t<data_t> *create_Node(doubleNode_t<data_t> *next = nullptr, doubleNode_t<data_t> *prev = nullptr, void(*setTask)(data_t &data_) = doNothing)
-{
-    #if true
-
-        doubleNode_t<data_t> *node_new = new doubleNode_t<data_t>();
-        node_new->set_Next(next);
-        node_new->set_Prev(prev);
-        (*setTask)(node_new->data_);
-
-        return node_new;
 
     #endif
 }
