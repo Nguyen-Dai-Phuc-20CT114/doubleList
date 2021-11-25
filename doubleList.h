@@ -1606,23 +1606,25 @@ errDel_t delete_Tail(doubleList_t<data_t> *&list, unsigned num = 1)
 /**
  * \fn                  template <class data_t> errDel_t delete_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0)
  * \brief               Delete <num> nodes before <pos>th node
- * \param   list        List includes
+ * \param   list        List includes deleted nodes
  * \param   num         Number of nodes will be deleted
  * \param   pos         Position for deleting nodes
  * \return              void
 **/
+
 template <class data_t>
-errDel_t delete_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0)
+errDel_t delete_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 1)
 {
     #if true
 
-        if(num  == 0)       {return E_DEL_NUM;  }
-        if(list->get_Head() == nullptr) {return E_INS_HEAD; }
-        if(tail == nullptr) {return E_INS_TAIL; }
+        if(list             == nullptr) {return E_DEL_L;    }
+        if(list->get_Head() == nullptr) {return E_DEL_HEAD; }
+        if(list->get_Tail() == nullptr) {return E_DEL_TAIL; }
+        if(num              <= 0      ) {return E_DEL_NUM;  }
+        if(pos              <  0      ) {return E_DEL_POS;  }
 
 
 
-        return E_INS_OK;
         
     #endif
 }
