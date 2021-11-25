@@ -5,7 +5,7 @@
  * $Date:               November 12, 2021
  * $Version:            2.1.0
  * 
- * File:                doubleList.cpp
+ * File:                doubleList_cfg.cpp
  * Project:             learning data structures
  * -------------------------------------------------------------
  * Brief:
@@ -30,7 +30,8 @@
 /* Include libraries
 /*
 /* -------------------------------------------------------------------------- */
-#include "doubleList.h"
+
+#include "doubleList_cfg.h"
 
 
 
@@ -41,9 +42,11 @@
 
 
 /* -----------------------------------------------------------------------------
-/* Macro definition
+/* Gobal variables are used in this file
 /*
 /* -------------------------------------------------------------------------- */
+
+int soLuongSinhVien = 0;
 
 
 
@@ -54,9 +57,17 @@
 
 
 /* -----------------------------------------------------------------------------
-/* Type definition
+/* Callback function definitions: set data task (functions run when initialize nodes)
 /*
 /* -------------------------------------------------------------------------- */
+
+
+void set_sinhVien(SinhVien_t &sinhVien)
+{
+    soLuongSinhVien += 1;
+    sinhVien.set_stt(soLuongSinhVien);
+    sinhVien.set_diem(soLuongSinhVien);
+}
 
 
 
@@ -67,9 +78,22 @@
 
 
 /* -----------------------------------------------------------------------------
-/* Extern variables
+/* Callback function definitions: condition task (functions run when it's true)
 /*
 /* -------------------------------------------------------------------------- */
+
+
+bool sttGiamDan(SinhVien_t sinhVien1, SinhVien_t sinhVien2)
+{
+    // Nếu stt_1 < stt_2 thì thực hiện việc sắp xếp giảm dần
+    if(sinhVien1.get_stt() < sinhVien2.get_stt())
+    {
+        return true;
+    }
+
+    // Không thì thôi
+    return false;
+}
 
 
 
@@ -80,9 +104,15 @@
 
 
 /* -----------------------------------------------------------------------------
-/* Global variables
+/* Callback function definitions: sub task (functions run when traverse list)
 /*
 /* -------------------------------------------------------------------------- */
+
+
+void inThongTinSinhVien(SinhVien_t &sinhVien)
+{
+    std::cout << sinhVien.get_stt() << "\t";
+}
 
 
 
@@ -93,45 +123,19 @@
 
 
 /* -----------------------------------------------------------------------------
-/* Local function protocols
+/* Others function definitions
 /*
 /* -------------------------------------------------------------------------- */
 
+void inDanhSachSinhVien(std::string lop_s, doubleList_t<SinhVien_t> *lop, std::string hanhDong)
+{
+    std::cout << "\n\n";
 
+    std::cout << "Danh sach sinh vien lop " << lop_s << " sau khi " << hanhDong << ":\n\t";
 
+    // Đi từ sinh viên đầu tiên tới sinh viên cuối cùng
+    // Mỗi lần sang sinh viên mới là thực hiện hàm in thông tin sinh viên một lần
+    traverse_List(lop, inThongTinSinhVien);
 
-
-
-
-
-
-/* -----------------------------------------------------------------------------
-/* Global classes
-/*
-/* -------------------------------------------------------------------------- */
-
-
-
-
-
-
-
-
-
-/* -----------------------------------------------------------------------------
-/* Local function definitions
-/*
-/* -------------------------------------------------------------------------- */
-
-
-
-
-
-
-
-
-
-/* -----------------------------------------------------------------------------
-/* Extern function definitions
-/*
-/* -------------------------------------------------------------------------- */
+    std::cout << "\n\n";
+}

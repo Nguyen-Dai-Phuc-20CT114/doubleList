@@ -334,15 +334,18 @@ class doubleList_t
         doubleNode_t<data_t> *ptr_head_;
         doubleNode_t<data_t> *ptr_tail_;
     
+
     /*** Constructors ***/
     public:
         doubleList_t();
     
+
     /*** Get functions ***/
     public:
         doubleNode_t<data_t> *get_Head();
         doubleNode_t<data_t> *get_Tail();
     
+
     /*** Set functions ***/
     public:
         void set_Head(doubleNode_t<data_t> *head);
@@ -364,11 +367,25 @@ class doubleList_t
 /* -------------------------------------------------------------------------- */
 
 
+
+template <class data_t>
+void doNothing(data_t &data_);
+
+
+
 template <class data_t>
 doubleNode_t<data_t> *create_Node(doubleNode_t<data_t> *next = nullptr, doubleNode_t<data_t> *prev = nullptr, void (*setTask)(data_t &data_) = doNothing);
 
 template <class data_t>
 doubleList_t<data_t> *create_List(unsigned num = 0, void(*setTask)(data_t &data_) = doNothing, creMode_t creMode = FORWARD);
+
+
+
+template <class data_t>
+doubleNode_t<data_t> *copy_Node(doubleNode_t<data_t> *node, doubleNode_t<data_t> *next = nullptr, doubleNode_t<data_t> *prev = nullptr, void (*setTask)(data_t &data_) = doNothing);
+
+template <class data_t>
+doubleList_t<data_t> *copy_List(doubleList_t<data_t> *list, void(*setTask)(data_t &data_) = doNothing, creMode_t creMode = FORWARD);
 
 
 
@@ -478,9 +495,6 @@ void link_TwoNode(doubleNode_t<data_t> *node1, doubleNode_t<data_t> *node2);
 template <class T>
 void swap(T &var1, T &var2);
 
-template <class data_t>
-void doNothing(data_t &data_);
-
 
 
 /*** Overide above functions***/
@@ -557,7 +571,7 @@ doubleNode_t<data_t> *create_Node(doubleNode_t<data_t> *next = nullptr, doubleNo
  * \brief               Create a brand new list having num nodes
  * \param   num         Number of nodes will be created
  * \param   setTask     Pointer to a function which set data_ for each node
- * \param   addMode     FORWARD or REVERSE
+ * \param   creMode     FORWARD or REVERSE
  * \return              Pointer to the last added node
 **/
 template <class data_t>
@@ -568,7 +582,7 @@ doubleList_t<data_t> *create_List(unsigned num = 0, void(*setTask)(data_t &data_
         if(num < 0) {return nullptr;}
 
 
-        doubleList_t<data_t> *list_new  = new doubleList_t();
+        doubleList_t<data_t> *list_new  = new doubleList_t<data_t>();
         list_new->set_Head(nullptr);
         list_new->set_Tail(nullptr);
 
@@ -608,6 +622,106 @@ doubleList_t<data_t> *create_List(unsigned num = 0, void(*setTask)(data_t &data_
                 }
             }
         }
+
+        return list_new;
+
+    #endif
+}
+
+
+/* ---------------------------------------------------------------- */
+
+
+
+/**
+ * \fn                  template <class data_t> doubleNode_t<data_t> *copy_Node(doubleNode_t<data_t> *node, doubleNode_t<data_t> *next = nullptr, doubleNode_t<data_t> *prev = nullptr, void(*setTask)(data_t &data_) = doNothing)
+ * \brief               Copy data of <node> to a new node 
+ * \param   node        Node is copied
+ * \param   next        Pointer to next node of new node
+ * \param   prev        Pointer to previous node of new node
+ * \param   setTask     Pointer to the function which set data_ for new node
+ * \return              Pointer to node which is create
+**/
+template <class data_t>
+doubleNode_t<data_t> *copy_Node(doubleNode_t<data_t> *node, doubleNode_t<data_t> *next = nullptr, doubleNode_t<data_t> *prev = nullptr, void(*setTask)(data_t &data_) = doNothing)
+{
+    #if true
+
+        doubleNode_t<data_t> *node_new = new doubleNode_t<data_t>();
+        node_new->set_Next(next);
+        node_new->set_Prev(prev);
+        node_new->data_ = node->data_;
+        (*setTask)(node_new->data_);
+
+        return node_new;
+
+    #endif
+}
+
+
+/**
+ * \fn                  template <class data_t> doubleList_t<data_t> *create_List(doubleList_t<data_t> *list, void(*setTask)(data_t &data_) = doNothing, creMode_t creMode = FORWARD)
+ * \brief               Copy nodes of <list> to a new list
+ * \param   list        List is copied
+ * \param   setTask     Pointer to a function which set data_ for each node
+ * \param   creMode     FORWARD or REVERSE
+ * \return              Pointer to the last added node
+**/
+template <class data_t>
+doubleList_t<data_t> *copy_List(doubleList_t<data_t> *list, void(*setTask)(data_t &data_) = doNothing, creMode_t creMode = FORWARD)
+{
+    #if true
+
+        if(list             == nullptr) {return nullptr;}
+        if(list->get_Head() == nullptr) {return nullptr;}
+        if(list->get_Tail() == nullptr) {return nullptr;}
+
+
+        doubleList_t<data_t> *list_new  = new doubleList_t<data_t>();
+        list_new->set_Head(nullptr);
+        list_new->set_Tail(nullptr);
+
+        doubleNode_t<data_t> *node_curr = list->get_Head();
+
+        do
+        {
+            doubleNode_t<data_t> *node_new = copy_Node<data_t>(node_curr, nullptr, nullptr, setTask);
+
+            // If new node is the first node in the list
+            if(list_new->get_Head() == nullptr)
+            {
+                list_new->set_Head(node_new);
+                list_new->set_Tail(node_new);
+            }
+
+            // If new node is not the first node in the list
+            else
+            {
+                // tail <-> new -> nullptr
+                link_TwoNode(list_new->get_Tail(), node_new);
+
+                // tail <-> new <-> head
+                link_TwoNode(node_new, list_new->get_Head());
+
+                // Add new node after the tail
+                if(creMode == FORWARD)
+                {
+                    // oldTail <-> tail <-> head
+                    list_new->set_Tail(node_new);
+                }
+
+                // if(creMode == REVERSE)
+                // Add new node before the head
+                else
+                {
+                    // tail <-> newHead <-> oldHead
+                    list_new->set_Head(node_new);
+                }
+            }
+
+            node_curr = node_curr->get_Next();
+        }
+        while(node_curr != list->get_Head());
 
         return list_new;
 
@@ -807,14 +921,14 @@ doubleNode_t<data_t> *get_Node(doubleList_t<data_t> *list, bool(*conTask)(data_t
 
 
 /**
- * \fn                  template <class data_t> int get_Index(doubleList_t<data_t> *list, doubleNode_t node)
+ * \fn                  template <class data_t> int get_Index(doubleList_t<data_t> *list, doubleNode_t<data_t> node)
  * \brief               Get index of specific node
  * \param   list        List includes specific node
  * \param   node        Specific node
  * \return              Index of specific node
 **/
 template <class data_t>
-int get_Index(doubleList_t<data_t> *list, doubleNode_t node)
+int get_Index(doubleList_t<data_t> *list, doubleNode_t<data_t> *node)
 {
     #if true
 
@@ -827,7 +941,7 @@ int get_Index(doubleList_t<data_t> *list, doubleNode_t node)
         int i = 0;
         do
         {
-            if(node_curr->data == node->data){return i;}
+            if(node_curr->data_ == node->data_){return i;}
 
             node_curr = node_curr->get_Next();
             ++i;
@@ -1192,8 +1306,8 @@ errIns_t insert_Head(doubleList_t<data_t> *&list, doubleNode_t<data_t> *&newNode
 {
     #if true
 
-        if(list    == nullptr)  {return E_INS_LIST;     }
-        if(newNode == nullptr)  {return E_INS_NEW_NODE; }
+        if(list    == nullptr)  {return E_INS_LIST; }
+        if(newNode == nullptr)  {return E_INS_NODE; }
 
 
         doubleNode_t<data_t> *node_new = newNode;
@@ -1262,7 +1376,7 @@ errIns_t insert_Tail(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode)
     #if true
 
         if(list    == nullptr)  {return E_INS_LIST;     }
-        if(newNode == nullptr)  {return E_INS_NEW_NODE; }
+        if(newNode == nullptr)  {return E_INS_NODE; }
 
 
         doubleNode_t<data_t> *node_new = newNode;
@@ -1331,17 +1445,26 @@ errIns_t insert_Before(doubleList_t<data_t> *&list, doubleNode_t<data_t> *&newNo
 {
     #if true
 
-        if(list             == nullptr) {return E_INS_LIST;     }
-        if(list->get_Head() == nullptr) {return E_INS_HEAD;     }
-        if(list->get_Tail() == nullptr) {return E_INS_TAIL;     }
-        if(newNode          == nullptr) {return E_INS_NEW_NODE; }
+        if(list             == nullptr) {return E_INS_LIST; }
+        if(list->get_Head() == nullptr) {return E_INS_HEAD; }
+        if(list->get_Tail() == nullptr) {return E_INS_TAIL; }
+        if(newNode          == nullptr) {return E_INS_NODE; }
 
 
+        doubleNode_t<data_t> *node_new = newNode;
+
+        // If the new node is in another list
+        if(newNode->get_Next() != nullptr || newNode->get_Prev() != nullptr)
+        {
+            // Copy data of new list to another node
+            node_new        = create_Node<data_t>();
+            node_new->data_ = newNode->data_;
+        }
 
         // pos = head
         if(pos == 0) 
         {
-            return insert_Head(list, newNode);
+            return insert_Head(list, node_new);
         }
         
         
@@ -1382,8 +1505,18 @@ errIns_t insert_After(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode
         if(list             == nullptr) {return E_INS_LIST;     }
         if(list->get_Head() == nullptr) {return E_INS_HEAD;     }
         if(list->get_Tail() == nullptr) {return E_INS_TAIL;     }
-        if(newNode          == nullptr) {return E_INS_NEW_NODE; }
+        if(newNode          == nullptr) {return E_INS_NODE; }
 
+
+        doubleNode_t<data_t> *node_new = newNode;
+
+        // If the new node is in another list
+        if(newNode->get_Next() != nullptr || newNode->get_Prev() != nullptr)
+        {
+            // Copy data of new list to another node
+            node_new        = create_Node<data_t>();
+            node_new->data_ = newNode->data_;
+        }
 
 
         /*** Get specific node ***/
@@ -1396,9 +1529,9 @@ errIns_t insert_After(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode
         
 
         // pos = tail
-        if(errMove == W_MOV_TAI) 
+        if(errMove == W_MOV_TAIL) 
         {
-            return insert_tail(list, newNode);
+            return insert_tail(list, node_new);
         }
 
 
@@ -1605,7 +1738,7 @@ errDel_t delete_Tail(doubleList_t<data_t> *&list, unsigned num = 1)
 
 /**
  * \fn                  template <class data_t> errDel_t delete_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0)
- * \brief               Delete <num> nodes before <pos>th node
+ * \brief               Delete <num> nodes before <pos>th node, don't delete node before head
  * \param   list        List includes deleted nodes
  * \param   num         Number of nodes will be deleted
  * \param   pos         Position for deleting nodes
@@ -1617,14 +1750,84 @@ errDel_t delete_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned p
 {
     #if true
 
-        if(list             == nullptr) {return E_DEL_L;    }
+        if(list             == nullptr) {return E_DEL_LIST; }
         if(list->get_Head() == nullptr) {return E_DEL_HEAD; }
         if(list->get_Tail() == nullptr) {return E_DEL_TAIL; }
         if(num              <= 0      ) {return E_DEL_NUM;  }
-        if(pos              <  0      ) {return E_DEL_POS;  }
+        if(pos              <= 0      ) {return E_DEL_POS;  }
 
 
+        /*** Go to specific node ***/
 
+        doubleNode_t<data_t> *node_spec = list->get_Head();
+
+        if(move_Next(list, node_spec, pos) == E_MOV_OVER) {return E_DEL_POS;}
+
+
+        // Node is before the specific node after deleted a node before specific node 
+        doubleNode_t<data_t> *node_prev = node_spec->get_Prev();
+
+        
+        /*** Delete <num> nodes before specific node ***/
+
+        int i = 0;
+        while(node_prev != list->get_Tail() && i < num)
+        {
+            /**
+             * i == 0
+             *
+             *           prev      old       spec
+             * node1 <-> node2 <-> node  <-> node4
+             * 
+             * *************************************
+             * i > 0
+             *
+             * prev      old                 spec
+             * node1 <-> node2               node4
+            **/
+            node_prev = node_prev->get_Prev();
+
+            /**
+             * i == 0
+             *
+             *           prev                spec
+             * node1 <-> node2               node4
+             * 
+             * *************************************
+             * i > 0
+             *
+             * prev                          spec
+             * node1                         node4
+            **/
+            delete node_prev->get_Next();
+
+            ++i;
+        }
+
+        // If deleted head
+        if(node_prev == list->get_Tail())
+        {
+            // The specific node is new head
+            list->set_Head(node_spec);
+
+            // Close the circle
+            link_TailHead(list);
+
+            // If not deleted enough
+            if(i < num)
+            {
+                return W_DEL_NUM;
+            }
+        }
+
+        // If not deleted head
+        else
+        {
+            // prev <-> spec
+            link_TwoNode(node_prev, node_spec);
+        }
+
+        return E_DEL_OK;
         
     #endif
 }
@@ -1632,8 +1835,8 @@ errDel_t delete_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned p
 
 /**
  * \fn                  template <class data_t> errDel_t delete_After(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0)
- * \brief               Delete <num> nodes after <pos>th node
- * \param   list        List includes
+ * \brief               Delete <num> nodes after <pos>th node, not delete node after tail
+ * \param   list        List includes deleted nodes
  * \param   num         Number of nodes will be deleted
  * \param   pos         Position for deleting nodes
  * \return              void
@@ -1643,13 +1846,84 @@ errDel_t delete_After(doubleList_t<data_t> *&list, unsigned num = 1, unsigned po
 {
     #if true
 
-        if(num  == 0)       {return E_DEL_NUM;  }
-        if(list->get_Head() == nullptr) {return E_INS_HEAD; }
-        if(tail == nullptr) {return E_INS_TAIL; }
+        if(list             == nullptr) {return E_DEL_LIST; }
+        if(list->get_Head() == nullptr) {return E_DEL_HEAD; }
+        if(list->get_Tail() == nullptr) {return E_DEL_TAIL; }
+        if(num              <= 0      ) {return E_DEL_NUM;  }
+        if(pos              <  0      ) {return E_DEL_POS;  }
 
 
+        /*** Go to specific node ***/
 
-        return E_INS_OK;
+        doubleNode_t<data_t> *node_spec = list->get_Head();
+
+        if(move_Next(list, node_spec, pos) == E_MOV_OVER) {return E_DEL_POS;}
+
+
+        // Node is after the specific node after deleted a node after specific node 
+        doubleNode_t<data_t> *node_next = node_spec->get_Next();
+
+        
+        /*** Delete <num> nodes after specific node ***/
+
+        int i = 0;
+        while(node_next != list->get_Head() && i < num)
+        {
+            /**
+             * i == 0
+             *
+             * spec      old       next
+             * node1 <-> node2 <-> node3 <-> node4
+             * 
+             * *************************************
+             * i > 0
+             *
+             * spec                old       next
+             * node1               node3 <-> node4
+            **/
+            node_next = node_next->get_Next();
+
+            /**
+             * i == 0
+             *
+             * spec                next
+             * node1               node3 <-> node4
+             * 
+             * *************************************
+             * i > 0
+             *
+             * spec                          next
+             * node1                         node4
+            **/
+            delete node_next->get_Prev();
+
+            ++i;
+        }
+
+        // If deleted tail
+        if(node_next == list->get_Head())
+        {
+            // The specific node is new tail
+            list->set_Tail(node_spec);
+
+            // Close the circle
+            link_TailHead(list);
+
+            // If not deleted enough
+            if(i < num)
+            {
+                return W_DEL_NUM;
+            }
+        }
+
+        // If not deleted head
+        else
+        {
+            // spec <-> next
+            link_TwoNode(node_spec, node_next);
+        }
+
+        return E_DEL_OK;
         
     #endif
 }
@@ -1658,7 +1932,7 @@ errDel_t delete_After(doubleList_t<data_t> *&list, unsigned num = 1, unsigned po
 /**
  * \fn                  template <class data_t> errDel_t delete_Node(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0)
  * \brief               Delete <pos>th node <num>th times
- * \param   list        List includes
+ * \param   list        List includes deleted nodes
  * \param   num         Number of times deleting node
  * \param   pos         Position of node
  * \return              void
@@ -1668,87 +1942,9 @@ errDel_t delete_Node(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos
 {
     #if true
 
-        if(num  == 0)       {return E_DEL_NUM;  }
-        if(list->get_Head() == nullptr) {return E_INS_HEAD; }
-        if(tail == nullptr) {return E_INS_TAIL; }
+        if(pos == 0) {return delete_Head(list, num);}
 
-        if(num == 1)
-        {
-            if(head == tail)
-            {
-                delete head;
-                head = tail = nullptr;
-            }
-
-            else if(pos == 0)
-            {
-                doubleNode_t<data_t> *node_prev = head;
-                doubleNode_t<data_t> *node_curr = list->get_Head();
-
-                node_prev = node_curr;
-                node_curr = node_curr->get_Next();
-                delete node_prev;
-
-                head = node_curr; 
-            }
-
-            else 
-            {
-                doubleNode_t<data_t> *node_prev = head;
-                doubleNode_t<data_t> *node_curr = list->get_Head();
-
-                int i = 0;
-                while(node_curr->get_Next() != list->get_Head() && i < pos)
-                {
-                    node_prev = node_curr;
-                    node_curr = node_curr->get_Next();
-                    ++i;
-                }
-
-                if(node_curr->get_Next() == list->get_Head())
-                {
-                    if(i < pos) {return E_INS_POS;}
-
-                    else if(i == pos)
-                    {
-                        node_prev->set_Next(nullptr);
-                        tail = node_prev;
-                        delete node_curr;
-                    }
-                }
-
-                else
-                {
-                    node_prev->set_Next(node_curr->get_Next());
-                    delete node_curr;                        
-                }
-            }
-        }
-
-        // Num > 1
-        else
-        {
-            // There is 1 node
-            if(head == tail)
-            {
-                delete head;
-                head = tail = nullptr;
-
-                if(num > 1) {return W_DEL_NUM;}
-            }
-
-            else
-            {
-                // Delete 1 node n times
-                for(int i = 0; i < num; ++i)
-                {
-                    errDel_t ret = delete_Node(head, tail, 1, pos);
-                    if(ret != E_INS_OK) {return ret;}
-                }
-            }
-        }
-                
-        return E_INS_OK;
+        return delete_After(list, num, pos-1);
                 
     #endif
 }
@@ -1757,34 +1953,72 @@ errDel_t delete_Node(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos
 /**
  * \fn                  template <class data_t> errDel_t delete_All(doubleList_t<data_t> *&list)
  * \brief               Delete all nodes of list
- * \param   list        List includes
- * \return              void
+ * \param   list        List includes deleted nodes
+ * \return              Errors when using delete functions
 **/
 template <class data_t>
 errDel_t delete_All(doubleList_t<data_t> *&list)
 {
     #if true
 
-        if(list->get_Head() == nullptr) {return E_INS_HEAD; }
-        if(tail == nullptr) {return E_INS_TAIL; }
+        if(list             == nullptr) {return E_DEL_LIST; }
+        if(list->get_Head() == nullptr) {return E_DEL_HEAD; }
+        if(list->get_Tail() == nullptr) {return E_DEL_TAIL; }
 
         doubleNode_t<data_t> *node_curr = list->get_Head();
 
         // There are many nodes
-        while(head->get_Next() != nullptr)
+        while(node_curr != list->get_Tail())
         {
-            node_curr = head;
-            head = head->get_Next();
+            // curr      head
+            // node1 <-> node2 <-> node3
+            list->set_Head(node_curr->get_Next());
+
+            // head
+            // node2 <-> node3
             delete node_curr;
+
+            // curr
+            // head
+            // node2 <-> node3
+            node_curr = list->get_Head();
         }
 
         // There is one node
-        delete head;
-        head = tail = nullptr;
+        delete node_curr;
+        list->set_Head(nullptr);
+        list->set_Tail(nullptr);
 
-        return E_INS_OK;
+        return E_DEL_OK;
 
-#endif
+    #endif
+}
+
+
+/**
+ * \fn                  template <class data_t> errDel_t delete_List(doubleList_t<data_t> *&list)
+ * \brief               Delete list and all its nodes
+ * \param   list        List is deleted
+ * \return              Error when using delete functions
+**/
+template <class data_t>
+errDel_t delete_List(doubleList_t<data_t> *&list)
+{
+    #if true
+
+        /*** Delete all nodes in list ***/
+        errDel_t errDel = delete_All(list);
+
+        if(errDel != E_DEL_OK){return errDel;}
+
+        /*** Delete list ***/
+        delete list;
+        list = nullptr;
+
+        
+        return E_DEL_OK;
+
+    #endif
 }
 
 
