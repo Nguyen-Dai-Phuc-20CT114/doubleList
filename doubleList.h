@@ -205,6 +205,9 @@ typedef enum
     // Number of nodes need to be created is 0
     E_INS_NUM   = E_NUM,
 
+    // Position is greater than number of nodes
+    E_INS_POS   = E_POS,
+
     // Node is nullptr
     E_INS_NODE  = E_NODE,
     
@@ -419,16 +422,16 @@ template <class data_t>
 errIns_t insert_Head(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode);
 
 template <class data_t>
-errIns_t insert_Tail(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode);
+errIns_t insert_Tail(doubleList_t<data_t> *&list, doubleNode_t<data_t> *&newNode);
 
 template <class data_t>
-errIns_t insert_Before(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode, unsigned pos = 0);
+errIns_t insert_Before(doubleList_t<data_t> *&list, doubleNode_t<data_t> *&newNode, unsigned pos = 0);
 
 template <class data_t>
-errIns_t insert_After(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode, unsigned pos = 0);
+errIns_t insert_After(doubleList_t<data_t> *&list, doubleNode_t<data_t> *&newNode, unsigned pos = 0);
 
 template <class data_t>
-errIns_t insert_List(doubleNode_t<data_t> *node1, doubleNode_t<data_t> *node2, doubleList_t<data_t> *newList);
+errIns_t insert_List(doubleNode_t<data_t> *&node1, doubleNode_t<data_t> *&node2, doubleList_t<data_t> *&newList);
 
 
 
@@ -1178,25 +1181,67 @@ errAdd_t add_After(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos =
 
 
 /**
- * \fn                  template <class data_t> errIns_t insert_Head(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode)
+ * \fn                  template <class data_t> errIns_t insert_Head(doubleList_t<data_t> *&list, doubleNode_t<data_t> *&newNode)
  * \brief               Insert an existing node before the head of list
- * \param   list           List includes
+ * \param   list        List includes the inserted node
  * \param   newNode     Node is inserted
  * \return              Error when using insert functions
 **/
 template <class data_t>
-errIns_t insert_Head(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode)
+errIns_t insert_Head(doubleList_t<data_t> *&list, doubleNode_t<data_t> *&newNode)
 {
     #if true
 
-        if(head    == nullptr)  {return E_INS_HEAD;     }
+        if(list    == nullptr)  {return E_INS_LIST;     }
         if(newNode == nullptr)  {return E_INS_NEW_NODE; }
 
-        doubleNode_t<data_t> *node_new = new doubleNode_t<data_t>();
-        node_new = newNode;
 
-        node_new->set_Next(list->get_Head());
-        head = node_new;
+        doubleNode_t<data_t> *node_new = newNode;
+
+
+        // If the new node is in another list
+        if(newNode->get_Next() != nullptr || newNode->get_Prev() != nullptr)
+        {
+            // Copy data of new list to another node
+            node_new        = create_Node<data_t>();
+            node_new->data_ = newNode->data_;
+        }
+
+        // If list is empty
+        if(list->get_Head() == nullptr)
+        {
+            list->set_Head(node_new);
+            list->set_Tail(node_new);
+        }
+
+        // If list has 1 node
+        else if(list->get_Head() == list->get_Tail())
+        {
+            //             tail
+            // newNode <-> head
+            link_TwoNode(node_new, list->get_Head());
+
+            // newNode     
+            // newhead <-> tail
+            list->set_Head(node_new);
+
+            // newHead <-> tail <-> newHead
+            link_TailHead(list);
+        }
+
+        // If list has many nodes
+        // tail <-> head
+        else
+        {
+            // tail <-> newNode -> nullptr
+            link_TwoNode(list->get_Tail(), node_new);
+
+            // tail <-> newNode <-> head
+            link_TwoNode(node_new, list->get_Head());
+
+            // tail <-> newHead <-> oldHead
+            list->set_Head(node_new);
+        }
 
         return E_INS_OK;
 
@@ -1205,9 +1250,9 @@ errIns_t insert_Head(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode)
 
 
 /**
- * \fn                  template <class data_t> errIns_t insert_Tail(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode)
+ * \fn                  template <class data_t> errIns_t insert_Tail(doubleList_t<data_t> *&list, doubleNode_t<data_t> *&newNode)
  * \brief               Insert an existing node after the tail of list
- * \param   list        List includes
+ * \param   list        List includes inserted node
  * \param   newNode     Node is inserted
  * \return              Error when using insert functions
 **/
@@ -1216,15 +1261,56 @@ errIns_t insert_Tail(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode)
 {
     #if true
 
-        if(tail    == nullptr)  {return E_INS_TAIL;     }
+        if(list    == nullptr)  {return E_INS_LIST;     }
         if(newNode == nullptr)  {return E_INS_NEW_NODE; }
 
-        doubleNode_t<data_t> *node_new = new doubleNode_t<data_t>();
-        node_new = newNode;
 
-        node_new->set_Next(nullptr);
-        tail    ->set_Next(newNode);
-        tail    = node_new;
+        doubleNode_t<data_t> *node_new = newNode;
+
+
+        // If the new node is in another list
+        if(newNode->get_Next() != nullptr || newNode->get_Prev() != nullptr)
+        {
+            // Copy data of new list to another node
+            node_new        = create_Node<data_t>();
+            node_new->data_ = newNode->data_;
+        }
+
+        // If list is empty
+        if(list->get_Head() == nullptr)
+        {
+            list->set_Head(node_new);
+            list->set_Tail(node_new);
+        }
+
+        // If list has 1 node
+        else if(list->get_Head() == list->get_Tail())
+        {
+            // head
+            // tail <-> newNode
+            link_TwoNode(list->get_Tail(), node_new);
+
+            //          newNode
+            // head <-> newTail   
+            list->set_Tail(node_new);
+
+            // head <-> newTail <-> head
+            link_TailHead(list);
+        }
+
+        // If list has many nodes
+        // tail <-> head
+        else
+        {
+            // tail <-> newNode -> nullptr
+            link_TwoNode(list->get_Tail(), node_new);
+
+            // tail <-> newNode <-> head
+            link_TwoNode(node_new, list->get_Head());
+
+            // oldTail <-> newTail <-> head
+            list->set_Tail(node_new);
+        }
 
         return E_INS_OK;
 
@@ -1233,7 +1319,7 @@ errIns_t insert_Tail(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode)
 
 
 /**
- * \fn                  template <class data_t> errIns_t insert_Before(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode, unsigned pos = 0)
+ * \fn                  template <class data_t> errIns_t insert_Before(doubleList_t<data_t> *&list, doubleNode_t<data_t> *&newNode, unsigned pos = 0)
  * \brief               Insert an existing node before specific node in the list
  * \param   list           List includes
  * \param   newNode     Node is inserted
@@ -1241,42 +1327,38 @@ errIns_t insert_Tail(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode)
  * \return              Error when using insert functions
 **/
 template <class data_t>
-errIns_t insert_Before(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode, unsigned pos = 0)
+errIns_t insert_Before(doubleList_t<data_t> *&list, doubleNode_t<data_t> *&newNode, unsigned pos = 0)
 {
     #if true
 
-        if(head    == nullptr)  {return E_INS_HEAD;     }
-        if(newNode == nullptr)  {return E_INS_NEW_NODE; }
+        if(list             == nullptr) {return E_INS_LIST;     }
+        if(list->get_Head() == nullptr) {return E_INS_HEAD;     }
+        if(list->get_Tail() == nullptr) {return E_INS_TAIL;     }
+        if(newNode          == nullptr) {return E_INS_NEW_NODE; }
+
+
 
         // pos = head
-        if(pos == 0) {return insert_Head(head, newNode);}
-
-
-        /*** pos > head ***/
-
-
-        doubleNode_t<data_t> *node_curr = list->get_Head();
-        doubleNode_t<data_t> *node_prev = head;
-
-        int i = 0;
-        while(i < pos && node_curr->get_Next() != list->get_Head())
+        if(pos == 0) 
         {
-            node_prev = node_curr;
-            node_curr = node_curr->get_Next();
-            ++i;
+            return insert_Head(list, newNode);
         }
+        
+        
+        /*** Get specific node ***/
+        doubleNode_t<data_t> *node_spec = list->get_Head();
 
-        // pos > number of nodes
-        if(node_curr->get_Next() == list->get_Head() && i < pos)
-        {
-            return E_INS_POS;
-        }
+        if(move_Next(list, node_spec, pos) == E_MOV_OVER) {return E_INS_POS;}
 
-        doubleNode_t<data_t> *node_new = new doubleNode_t<data_t>();
-        node_new = newNode;
 
-        node_prev->set_Next(node_new);
-        node_new->set_Next(node_curr);
+        // Get node before the specific node
+        doubleNode_t<data_t> *node_prev = node_spec->get_Prev();
+
+        // prev <-> newNode -> nullptr
+        link_TwoNode(node_prev, node_new);
+
+        // prev <-> newNode <-> spec
+        link_TwoNode(node_new, node_spec);
 
         return E_INS_OK;
 
@@ -1297,54 +1379,37 @@ errIns_t insert_After(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode
 {
     #if true
 
-        if(head    == nullptr)  {return E_INS_HEAD;     }
-        if(tail    == nullptr)  {return E_INS_TAIL;     }
-        if(newNode == nullptr)  {return E_INS_NEW_NODE; }
-
-        // There is 1 node
-        if(head == tail) {return insert_Tail(tail, newNode);}
+        if(list             == nullptr) {return E_INS_LIST;     }
+        if(list->get_Head() == nullptr) {return E_INS_HEAD;     }
+        if(list->get_Tail() == nullptr) {return E_INS_TAIL;     }
+        if(newNode          == nullptr) {return E_INS_NEW_NODE; }
 
 
 
-        /*** There are many nodes ***/
+        /*** Get specific node ***/
 
+        doubleNode_t<data_t> *node_spec = list->get_Head();
 
-        doubleNode_t<data_t> *node_curr = list->get_Head();
+        errMov_t errMove = move_Next(list, node_spec, pos);
 
-        int i = 0;
-        while(i < pos && node_curr->get_Next() != list->get_Head())
+        if(errMove == E_MOV_OVER) {return E_ADD_POS;}
+        
+
+        // pos = tail
+        if(errMove == W_MOV_TAI) 
         {
-            node_curr = node_curr->get_Next();
-            ++i;
+            return insert_tail(list, newNode);
         }
 
-        // pos > number of nodes
-        if(node_curr->get_Next() == list->get_Head() && i < pos)
-        {
-            // pos is tail of double list
-            if(i == pos){return insert_Tail(tail, newNode);}
 
-            // pos > number of nodes
-            if(i < pos){return E_INS_POS;}
-            
-        }
+        // Get node after the specific node
+        doubleNode_t<data_t> *node_next = node_spec->get_Next();
 
-        // pos < number of nodes
-        else
-        {
-            // node_curr -> node_next
-            doubleNode_t<data_t> *node_next = node_curr->get_Next();
+        // spec <-> newNode -> nullptr
+        link_TwoNode(node_spec, node_new);
 
-            //        node_new
-            // node_curr -> node_next
-            doubleNode_t<data_t> *node_new = new doubleNode_t<data_t>();
-            node_new = newNode;
-
-            // node_curr -> node new -> node_next
-            node_curr->set_Next(node_new);
-            node_new ->set_Next(node_next);
-
-        }
+        // spec <-> newNode <-> next
+        link_TwoNode(node_new, node_next);
 
         return E_INS_OK;
 
@@ -1353,15 +1418,15 @@ errIns_t insert_After(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode
 
 
 /**
- * \fn                  template <class data_t> errIns_t insert_List(doubleNode_t<data_t> *node1, doubleNode_t<data_t> *node2, doubleList_t<data_t> *newList)
- * \brief               Insert an existing list between node1 and node2
+ * \fn                  template <class data_t> errIns_t insert_List(doubleNode_t<data_t> *&node1, doubleNode_t<data_t> *&node2, doubleList_t<data_t> *&newList)
+ * \brief               Insert an existing list between node1 and node2, node1 != node2
  * \param   node1       New list is insert after   node 1
  * \param   node2       New list is insert before  node 2
  * \param   newList     New list is insert between node 1 and node 2
  * \return              Error when using insert functions
 **/
 template <class data_t>
-errIns_t insert_List(doubleNode_t<data_t> *node1, doubleNode_t<data_t> *node2, doubleList_t<data_t> *newList)
+errIns_t insert_List(doubleNode_t<data_t> *&node1, doubleNode_t<data_t> *&node2, doubleList_t<data_t> *&newList)
 {
     #if true
 
