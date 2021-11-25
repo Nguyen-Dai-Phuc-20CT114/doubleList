@@ -1463,51 +1463,68 @@ errIns_t insert_List(doubleNode_t<data_t> *&node1, doubleNode_t<data_t> *&node2,
 template <class data_t>
 errDel_t delete_Head(doubleList_t<data_t> *&list, unsigned num = 1)
 {
-#if true
+    #if true
 
-    if(list             == nullptr) {return E_DEL_LIST; }
-    if(list->get_Head() == nullptr) {return E_DEL_HEAD; }
-    if(list->get_Tail() == nullptr) {return E_DEL_TAIL; }
-    if(num              == 0      ) {return E_DEL_NUM;  }
-    
-    // There is 1 node
-    if(head == tail)
-    {
-        doubleNode_t<data_t> *node_curr = list->get_Head();
-        delete node_curr;
+        if(list             == nullptr) {return E_DEL_LIST; }
+        if(list->get_Head() == nullptr) {return E_DEL_HEAD; }
+        if(list->get_Tail() == nullptr) {return E_DEL_TAIL; }
+        if(num              == 0      ) {return E_DEL_NUM;  }
 
-        head = tail = nullptr;
-
-        if(num != 1) {return W_DEL_NUM; }
-    }
-
-    else
-    {
-        doubleNode_t<data_t> *node_prev = head;
+        
         doubleNode_t<data_t> *node_curr = list->get_Head();
 
         int i = 0;
-        while(node_curr != nullptr && i < num)
+        while(node_curr != list->get_Tail() && i < num)
         {
-            node_prev = node_curr;
-            node_curr = node_curr->get_Next();
-            delete node_prev;
+            // curr      head
+            // node1 <-> node2 <-> node3
+            list->set_Head(node_curr->get_Next());
+
+            // head
+            // node2 <-> node3
+            delete node_curr;
+
+            // curr
+            // head
+            // node2 <-> node3
+            node_curr = list->get_Head();
+
+            // Deleted 1 more node
             ++i;
         }
-                    
-        head = node_curr;
 
-        // Now list is empty
-        if(node_curr == nullptr)
+        // List has only 1 node left
+        if(node_curr != list->get_Tail())
         {
-            tail = nullptr;
-            if(i < num -1) {return W_DEL_NUM;}
-        }
-    }
+            // Not deleted enough
+            if(i < num)
+            {
+                // Delete the last node
+                delete list->get_Head();
+                list->set_Head(nullptr);
+                list->set_Tail(nullptr);
+                ++i;
+            }
 
-    return E_INS_OK;
-            
-#endif
+            // List is empty but still not deleted enough
+            if(i < num) 
+            {
+                // Number of nodes is not enough
+                return W_DEL_NUM;
+            }
+        }
+
+        // If the list is empty
+        if(list->get_Head() == nullptr) {return E_DEL_OK;}
+
+        // If the list still has nodes
+        // Close the circle
+        link_TailHead(list);
+        
+
+        return E_DEL_OK;
+                
+    #endif
 }
 
 
@@ -1523,62 +1540,66 @@ errDel_t delete_Tail(doubleList_t<data_t> *&list, unsigned num = 1)
 {
     #if true
 
-        if(num  == 0)       {return E_DEL_NUM;  }
-        if(list->get_Head() == nullptr) {return E_INS_HEAD; }
-        if(tail == nullptr) {return E_INS_TAIL; }
+        if(list             == nullptr) {return E_DEL_LIST; }
+        if(list->get_Head() == nullptr) {return E_DEL_HEAD; }
+        if(list->get_Tail() == nullptr) {return E_DEL_TAIL; }
+        if(num              == 0      ) {return E_DEL_NUM;  }
+
         
-        if(num == 1)
+        doubleNode_t<data_t> *node_curr = list->get_Head();
+
+        int i = 0;
+        while(node_curr != list->get_Tail() && i < num)
         {
-            // There is 1 node
-            if(head == tail)
+            // curr      head
+            // node1 <-> node2 <-> node3
+            list->set_Head(node_curr->get_Next());
+
+            // head
+            // node2 <-> node3
+            delete node_curr;
+
+            // curr
+            // head
+            // node2 <-> node3
+            node_curr = list->get_Head();
+
+            // Deleted 1 more node
+            ++i;
+        }
+
+        // List has only 1 node left
+        if(node_curr != list->get_Tail())
+        {
+            // Not deleted enough
+            if(i < num)
             {
-                delete head;
-                head = tail = nullptr;
+                // Delete the last node
+                delete list->get_Head();
+                list->set_Head(nullptr);
+                list->set_Tail(nullptr);
+                ++i;
             }
 
-            else
+            // List is empty but still not deleted enough
+            if(i < num) 
             {
-                doubleNode_t<data_t> *node_prev = head;
-                doubleNode_t<data_t> *node_curr = list->get_Head();
-
-                while(node_curr->get_Next() != list->get_Head())
-                {
-                    node_prev = node_curr;
-                    node_curr = node_curr->get_Next();
-                }
-                        
-                node_prev->set_Next(nullptr);
-                tail = node_prev;
-                delete node_curr;
+                // Number of nodes is not enough
+                return W_DEL_NUM;
             }
         }
 
-        // Num > 1
-        else
-        {
-            // There is 1 node
-            if(head == tail)
-            {
-                delete head;
-                head = tail = nullptr;
+        // If the list is empty
+        if(list->get_Head() == nullptr) {return E_DEL_OK;}
 
-                if(num != 1) {return W_DEL_NUM;}
-            }
+        // If the list still has nodes
+        // Close the circle
+        link_TailHead(list);
+        
 
-            else
-            {
-                // Delete n times
-                for(int i = 0; i < num; ++i)
-                {
-                    // List is empty before completing deleting n nodes
-                    if(delete_Tail(head, tail, 1) != E_INS_OK) {return W_DEL_NUM;}
-                }
-            }
-        }
-
-    return E_INS_OK;
+        return E_DEL_OK;
                 
-#endif
+    #endif
 }
 
 
@@ -2020,6 +2041,12 @@ void link_TailHead(doubleList_t<data_t> *&list)
 
         list->get_Tail()->set_Next(list->get_Head());
         list->get_Head()->set_Prev(list->get_Tail());
+
+        if(list->get_Tail() == list->get_Head())
+        {
+            list->get_Tail()->set_Prev(list->get_Head());
+            list->get_Head()->set_Next(list->get_Tail());
+        }
 
     #endif
 }
