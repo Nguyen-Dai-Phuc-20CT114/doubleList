@@ -1494,7 +1494,7 @@ errDel_t delete_Head(doubleList_t<data_t> *&list, unsigned num = 1)
         }
 
         // List has only 1 node left
-        if(node_curr != list->get_Tail())
+        if(node_curr == list->get_Tail())
         {
             // Not deleted enough
             if(i < num)
@@ -1546,22 +1546,22 @@ errDel_t delete_Tail(doubleList_t<data_t> *&list, unsigned num = 1)
         if(num              == 0      ) {return E_DEL_NUM;  }
 
         
-        doubleNode_t<data_t> *node_curr = list->get_Head();
+        doubleNode_t<data_t> *node_curr = list->get_Tail();
 
         int i = 0;
-        while(node_curr != list->get_Tail() && i < num)
+        while(node_curr != list->get_Head() && i < num)
         {
-            // curr      head
+            //           tail      curr
             // node1 <-> node2 <-> node3
-            list->set_Head(node_curr->get_Next());
+            list->set_Tail(node_curr->get_Prev());
 
-            // head
-            // node2 <-> node3
+            //           tail
+            // node1 <-> node2
             delete node_curr;
 
-            // curr
-            // head
-            // node2 <-> node3
+            //           curr
+            //           tail
+            // node1 <-> node2
             node_curr = list->get_Head();
 
             // Deleted 1 more node
@@ -1569,13 +1569,13 @@ errDel_t delete_Tail(doubleList_t<data_t> *&list, unsigned num = 1)
         }
 
         // List has only 1 node left
-        if(node_curr != list->get_Tail())
+        if(node_curr == list->get_Head())
         {
             // Not deleted enough
             if(i < num)
             {
                 // Delete the last node
-                delete list->get_Head();
+                delete list->get_Tail();
                 list->set_Head(nullptr);
                 list->set_Tail(nullptr);
                 ++i;
