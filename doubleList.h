@@ -1456,8 +1456,7 @@ errIns_t insert_List(doubleNode_t<data_t> *&node1, doubleNode_t<data_t> *&node2,
 /**
  * \fn                  template <class data_t> errDel_t delete_Head(doubleList_t<data_t> *&list, unsigned num = 1)
  * \brief               Delete first node n times
- * \param   list           List includes
- * \param   list        List includes
+ * \param   list        List includes deleted nodes
  * \param   num         Number of times that first node is deleted
  * \return              Error when using delete functions
 **/
@@ -1466,9 +1465,10 @@ errDel_t delete_Head(doubleList_t<data_t> *&list, unsigned num = 1)
 {
 #if true
 
-    if(num  == 0)       {return E_DEL_NUM;  }
-    if(list->get_Head() == nullptr) {return E_INS_HEAD; }
-    if(tail == nullptr) {return E_INS_TAIL; }
+    if(list             == nullptr) {return E_DEL_LIST; }
+    if(list->get_Head() == nullptr) {return E_DEL_HEAD; }
+    if(list->get_Tail() == nullptr) {return E_DEL_TAIL; }
+    if(num              == 0      ) {return E_DEL_NUM;  }
     
     // There is 1 node
     if(head == tail)
@@ -1514,7 +1514,6 @@ errDel_t delete_Head(doubleList_t<data_t> *&list, unsigned num = 1)
 /**
  * \fn                  template <class data_t> errDel_t delete_Tail(doubleList_t<data_t> *&list, unsigned num = 1)
  * \brief               Delete last node n times
- * \param   list           List includes
  * \param   list        List includes
  * \param   num         Number of times that last node is deleted
  * \return              void
@@ -1586,7 +1585,6 @@ errDel_t delete_Tail(doubleList_t<data_t> *&list, unsigned num = 1)
 /**
  * \fn                  template <class data_t> errDel_t delete_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0)
  * \brief               Delete <num> nodes before <pos>th node
- * \param   list           List includes
  * \param   list        List includes
  * \param   num         Number of nodes will be deleted
  * \param   pos         Position for deleting nodes
@@ -1612,7 +1610,6 @@ errDel_t delete_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned p
 /**
  * \fn                  template <class data_t> errDel_t delete_After(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0)
  * \brief               Delete <num> nodes after <pos>th node
- * \param   list           List includes
  * \param   list        List includes
  * \param   num         Number of nodes will be deleted
  * \param   pos         Position for deleting nodes
@@ -1638,7 +1635,6 @@ errDel_t delete_After(doubleList_t<data_t> *&list, unsigned num = 1, unsigned po
 /**
  * \fn                  template <class data_t> errDel_t delete_Node(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0)
  * \brief               Delete <pos>th node <num>th times
- * \param   list           List includes
  * \param   list        List includes
  * \param   num         Number of times deleting node
  * \param   pos         Position of node
@@ -1738,7 +1734,6 @@ errDel_t delete_Node(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos
 /**
  * \fn                  template <class data_t> errDel_t delete_All(doubleList_t<data_t> *&list)
  * \brief               Delete all nodes of list
- * \param   list           List includes
  * \param   list        List includes
  * \return              void
 **/
