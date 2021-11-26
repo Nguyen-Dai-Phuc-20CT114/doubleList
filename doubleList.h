@@ -371,6 +371,9 @@ class doubleList_t
 template <class data_t>
 void doNothing(data_t &data_);
 
+template<class data_t>
+bool isTrue(data_t &data_);
+
 
 
 template <class data_t>
@@ -382,10 +385,10 @@ doubleList_t<data_t> *create_List(unsigned num = 0, void(*setTask)(data_t &data_
 
 
 template <class data_t>
-doubleNode_t<data_t> *copy_Node(doubleNode_t<data_t> *node, doubleNode_t<data_t> *next = nullptr, doubleNode_t<data_t> *prev = nullptr, void (*setTask)(data_t &data_) = doNothing);
+doubleNode_t<data_t> *copy_Node(doubleNode_t<data_t> *node, doubleNode_t<data_t> *next = nullptr, doubleNode_t<data_t> *prev = nullptr, bool (*conTask)(data_t &data_) = isTrue);
 
 template <class data_t>
-doubleList_t<data_t> *copy_List(doubleList_t<data_t> *list, void(*setTask)(data_t &data_) = doNothing, creMode_t creMode = FORWARD);
+doubleList_t<data_t> *copy_List(doubleList_t<data_t> *list, bool(*conTask)(data_t &data_) = isTrue, creMode_t creMode = FORWARD);
 
 
 
@@ -634,16 +637,16 @@ doubleList_t<data_t> *create_List(unsigned num = 0, void(*setTask)(data_t &data_
 
 
 /**
- * \fn                  template <class data_t> doubleNode_t<data_t> *copy_Node(doubleNode_t<data_t> *node, doubleNode_t<data_t> *next = nullptr, doubleNode_t<data_t> *prev = nullptr, void(*setTask)(data_t &data_) = doNothing)
+ * \fn                  template <class data_t> doubleNode_t<data_t> *copy_Node(doubleNode_t<data_t> *node, doubleNode_t<data_t> *next = nullptr, doubleNode_t<data_t> *prev = nullptr, bool (*conTask)(data_t &data_) = isTrue)
  * \brief               Copy data of <node> to a new node 
  * \param   node        Node is copied
  * \param   next        Pointer to next node of new node
  * \param   prev        Pointer to previous node of new node
- * \param   setTask     Pointer to the function which set data_ for new node
+ * \param   conTask     Only copy node when conTask is true
  * \return              Pointer to node which is create
 **/
 template <class data_t>
-doubleNode_t<data_t> *copy_Node(doubleNode_t<data_t> *node, doubleNode_t<data_t> *next = nullptr, doubleNode_t<data_t> *prev = nullptr, void(*setTask)(data_t &data_) = doNothing)
+doubleNode_t<data_t> *copy_Node(doubleNode_t<data_t> *node, doubleNode_t<data_t> *next = nullptr, doubleNode_t<data_t> *prev = nullptr, bool (*conTask)(data_t &data_) = isTrue)
 {
     #if true
 
@@ -651,24 +654,29 @@ doubleNode_t<data_t> *copy_Node(doubleNode_t<data_t> *node, doubleNode_t<data_t>
         node_new->set_Next(next);
         node_new->set_Prev(prev);
         node_new->data_ = node->data_;
-        (*setTask)(node_new->data_);
 
-        return node_new;
+        if((*conTask)(node_new->data_))
+        {
+            return node_new;
+        }
+
+        delete node_new;
+        return nullptr;
 
     #endif
 }
 
 
 /**
- * \fn                  template <class data_t> doubleList_t<data_t> *create_List(doubleList_t<data_t> *list, void(*setTask)(data_t &data_) = doNothing, creMode_t creMode = FORWARD)
+ * \fn                  template <class data_t> doubleList_t<data_t> *copy_List(doubleList_t<data_t> *list, bool(*conTask)(data_t &data_) = isTrue, creMode_t creMode = FORWARD)
  * \brief               Copy nodes of <list> to a new list
  * \param   list        List is copied
- * \param   setTask     Pointer to a function which set data_ for each node
+ * \param   conTask     Copy nodes that make conTask is true
  * \param   creMode     FORWARD or REVERSE
  * \return              Pointer to the last added node
 **/
 template <class data_t>
-doubleList_t<data_t> *copy_List(doubleList_t<data_t> *list, void(*setTask)(data_t &data_) = doNothing, creMode_t creMode = FORWARD)
+doubleList_t<data_t> *copy_List(doubleList_t<data_t> *list, bool(*conTask)(data_t &data_) = isTrue, creMode_t creMode = FORWARD)
 {
     #if true
 
@@ -685,37 +693,40 @@ doubleList_t<data_t> *copy_List(doubleList_t<data_t> *list, void(*setTask)(data_
 
         do
         {
-            doubleNode_t<data_t> *node_new = copy_Node<data_t>(node_curr, nullptr, nullptr, setTask);
+            doubleNode_t<data_t> *node_new = copy_Node<data_t>(node_curr, nullptr, nullptr, conTask);
 
-            // If new node is the first node in the list
-            if(list_new->get_Head() == nullptr)
+            if(node_new != nullptr)
             {
-                list_new->set_Head(node_new);
-                list_new->set_Tail(node_new);
-            }
-
-            // If new node is not the first node in the list
-            else
-            {
-                // tail <-> new -> nullptr
-                link_TwoNode(list_new->get_Tail(), node_new);
-
-                // tail <-> new <-> head
-                link_TwoNode(node_new, list_new->get_Head());
-
-                // Add new node after the tail
-                if(creMode == FORWARD)
+                // If new node is the first node in the list
+                if(list_new->get_Head() == nullptr)
                 {
-                    // oldTail <-> tail <-> head
+                    list_new->set_Head(node_new);
                     list_new->set_Tail(node_new);
                 }
 
-                // if(creMode == REVERSE)
-                // Add new node before the head
+                // If new node is not the first node in the list
                 else
                 {
-                    // tail <-> newHead <-> oldHead
-                    list_new->set_Head(node_new);
+                    // tail <-> new -> nullptr
+                    link_TwoNode(list_new->get_Tail(), node_new);
+
+                    // tail <-> new <-> head
+                    link_TwoNode(node_new, list_new->get_Head());
+
+                    // Add new node after the tail
+                    if(creMode == FORWARD)
+                    {
+                        // oldTail <-> tail <-> head
+                        list_new->set_Tail(node_new);
+                    }
+
+                    // if(creMode == REVERSE)
+                    // Add new node before the head
+                    else
+                    {
+                        // tail <-> newHead <-> oldHead
+                        list_new->set_Head(node_new);
+                    }
                 }
             }
 
@@ -2335,13 +2346,26 @@ void swap(T &var1, T &var2)
 /**
  * \fn                  template <class data_t> void doNothing(data_t &data_)
  * \brief               Do nothing
- * \param               void
+ * \param   data_t      For nothing
  * \return              void
 **/
 template <class data_t>
 void doNothing(data_t &data_)
 {
     
+}
+
+
+/**
+ * \fn                  template <class data_t> bool isTrue(data_t &data_)
+ * \brief               Do nothing and return true
+ * \param   data_       For nothing
+ * \return              true
+**/
+template <class data_t>
+bool doNothing(data_t &data_)
+{
+    return true;
 }
 
 #endif // DOUBLE_LIST_H
