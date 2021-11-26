@@ -421,70 +421,70 @@ int get_Index(doubleList_t<data_t> *list, bool (*conTask)(data_t data_));
 
 
 template <class data_t>
-errAdd_t add_Head(doubleList_t<data_t> *&list, unsigned num = 1, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing);
+errAdd_t add_Head(doubleList_t<data_t> *list, unsigned num = 1, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing);
 
 template <class data_t>
-errAdd_t add_Tail(doubleList_t<data_t> *&list, unsigned num = 1, void(*setTask)(data_t &data_) = doNothing);
+errAdd_t add_Tail(doubleList_t<data_t> *list, unsigned num = 1, void(*setTask)(data_t &data_) = doNothing);
 
 template <class data_t>
-errAdd_t add_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing);
+errAdd_t add_Before(doubleList_t<data_t> *list, unsigned num = 1, unsigned pos = 0, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing);
 
 template <class data_t>
-errAdd_t add_After(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, void(*setTask)(data_t &data_) = doNothing);
-
-
-
-
-template <class data_t>
-errIns_t insert_Head(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode);
-
-template <class data_t>
-errIns_t insert_Tail(doubleList_t<data_t> *&list, doubleNode_t<data_t> *&newNode);
-
-template <class data_t>
-errIns_t insert_Before(doubleList_t<data_t> *&list, doubleNode_t<data_t> *&newNode, unsigned pos = 0);
-
-template <class data_t>
-errIns_t insert_After(doubleList_t<data_t> *&list, doubleNode_t<data_t> *&newNode, unsigned pos = 0);
-
-template <class data_t>
-errIns_t insert_List(doubleNode_t<data_t> *&node1, doubleNode_t<data_t> *&node2, doubleList_t<data_t> *&newList);
+errAdd_t add_After(doubleList_t<data_t> *list, unsigned num = 1, unsigned pos = 0, void(*setTask)(data_t &data_) = doNothing);
 
 
 
 
 template <class data_t>
-errDel_t delete_Head(doubleList_t<data_t> *&list, unsigned num = 1);
+errIns_t insert_Head(doubleList_t<data_t> *list, doubleNode_t<data_t> *newNode);
 
 template <class data_t>
-errDel_t delete_Tail(doubleList_t<data_t> *&list, unsigned num = 1);
+errIns_t insert_Tail(doubleList_t<data_t> *list, doubleNode_t<data_t> *newNode);
 
 template <class data_t>
-errDel_t delete_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0);
+errIns_t insert_Before(doubleList_t<data_t> *list, doubleNode_t<data_t> *newNode, unsigned pos = 0);
 
 template <class data_t>
-errDel_t delete_After(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0);
+errIns_t insert_After(doubleList_t<data_t> *list, doubleNode_t<data_t> *newNode, unsigned pos = 0);
 
 template <class data_t>
-errDel_t delete_Node(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0);
-
-template <class data_t>
-errDel_t delete_All(doubleList_t<data_t> *&list);
-
-template <class data_t>
-errDel_t delete_List(doubleList_t<data_t> *&list);
+errIns_t insert_List(doubleNode_t<data_t> *node1, doubleNode_t<data_t> *node2, doubleList_t<data_t> *newList);
 
 
 
 
 template <class data_t>
-errMov_t move_Next(doubleList_t<data_t> *&list, doubleNode_t<data_t> *&node, unsigned n);
+errDel_t delete_Head(doubleList_t<data_t> *list, unsigned num = 1);
+
+template <class data_t>
+errDel_t delete_Tail(doubleList_t<data_t> *list, unsigned num = 1);
+
+template <class data_t>
+errDel_t delete_Before(doubleList_t<data_t> *list, unsigned num = 1, unsigned pos = 0);
+
+template <class data_t>
+errDel_t delete_After(doubleList_t<data_t> *list, unsigned num = 1, unsigned pos = 0);
+
+template <class data_t>
+errDel_t delete_Node(doubleList_t<data_t> *list, unsigned num = 1, unsigned pos = 0);
+
+template <class data_t>
+errDel_t delete_All(doubleList_t<data_t> *list);
+
+template <class data_t>
+errDel_t delete_List(doubleList_t<data_t> *list);
 
 
 
 
 template <class data_t>
-void link_TailHead(doubleList_t<data_t> *&list);
+errMov_t move_Next(doubleList_t<data_t> *list, doubleNode_t<data_t> *node, unsigned n);
+
+
+
+
+template <class data_t>
+void link_TailHead(doubleList_t<data_t> *list);
 
 template <class data_t>
 void link_TwoNode(doubleNode_t<data_t> *node1, doubleNode_t<data_t> *node2);
@@ -513,19 +513,19 @@ void swap(T &var1, T &var2);
 
 
 // template <class data_t>
-// errAdd_t add_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing);
+// errAdd_t add_Before(doubleList_t<data_t> *list, unsigned num = 1, unsigned pos = 0, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing);
 
 // template <class data_t>
-// errAdd_t add_After(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0);
+// errAdd_t add_After(doubleList_t<data_t> *list, unsigned num = 1, unsigned pos = 0);
 
 
 
 
 // template <class data_t>
-// errDel_t delete_Before(doubleList_t<data_t> *&list, unsigned num = 1);
+// errDel_t delete_Before(doubleList_t<data_t> *list, unsigned num = 1);
 
 // template <class data_t>
-// errDel_t delete_After(doubleList_t<data_t> *&list, unsigned num = 1);
+// errDel_t delete_After(doubleList_t<data_t> *list, unsigned num = 1);
 
 
 
@@ -994,7 +994,7 @@ int get_Index(doubleList_t<data_t> *list, bool (*conTask)(data_t data_))
 
 
 /**
- * \fn                  template <class data_t> errAdd_t add_Head(doubleList_t<data_t> *&list, unsigned num = 1, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing)
+ * \fn                  template <class data_t> errAdd_t add_Head(doubleList_t<data_t> *list, unsigned num = 1, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing)
  * \brief               Add new nodes at head of double list
  * \param   list        List is added new head
  * \param   num         Number of nodes will be added
@@ -1003,7 +1003,7 @@ int get_Index(doubleList_t<data_t> *list, bool (*conTask)(data_t data_))
  * \return              Error when using this function
 **/
 template <class data_t>
-errAdd_t add_Head(doubleList_t<data_t> *&list, unsigned num = 1, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing)
+errAdd_t add_Head(doubleList_t<data_t> *list, unsigned num = 1, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing)
 {
     #if true
 
@@ -1088,7 +1088,7 @@ errAdd_t add_Head(doubleList_t<data_t> *&list, unsigned num = 1, addMode_t addMo
 
 
 /**
- * \fn                  template <class data_t> errAdd_t add_Tail(doubleList_t<data_t> *&list, unsigned num = 1, void(*setTask)(data_t &data_) = doNothing)
+ * \fn                  template <class data_t> errAdd_t add_Tail(doubleList_t<data_t> *list, unsigned num = 1, void(*setTask)(data_t &data_) = doNothing)
  * \brief               Add new nodes at tail of double list
  * \param   list        List is added new tail
  * \param   num         Number of nodes will be added
@@ -1096,7 +1096,7 @@ errAdd_t add_Head(doubleList_t<data_t> *&list, unsigned num = 1, addMode_t addMo
  * \return              Error when using this function
 **/
 template <class data_t>
-errAdd_t add_Tail(doubleList_t<data_t> *&list, unsigned num = 1, void(*setTask)(data_t &data_) = doNothing)
+errAdd_t add_Tail(doubleList_t<data_t> *list, unsigned num = 1, void(*setTask)(data_t &data_) = doNothing)
 {
     #if true
 
@@ -1165,7 +1165,7 @@ errAdd_t add_Tail(doubleList_t<data_t> *&list, unsigned num = 1, void(*setTask)(
 
 
 /**
- * \fn                  template <class data_t> errAdd_t add_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing)
+ * \fn                  template <class data_t> errAdd_t add_Before(doubleList_t<data_t> *list, unsigned num = 1, unsigned pos = 0, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing)
  * \brief               Add new nodes before a specified position
  * \param   list        List is added new nodes
  * \param   num         Number of nodes will be added
@@ -1175,7 +1175,7 @@ errAdd_t add_Tail(doubleList_t<data_t> *&list, unsigned num = 1, void(*setTask)(
  * \return              Error when using this function
 **/
 template <class data_t>
-errAdd_t add_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing)
+errAdd_t add_Before(doubleList_t<data_t> *list, unsigned num = 1, unsigned pos = 0, addMode_t addMode = STACK, void(*setTask)(data_t &data_) = doNothing)
 {
     #if true
 
@@ -1232,7 +1232,7 @@ errAdd_t add_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos 
 
 
 /**
- * \fn                  template <class data_t> errAdd_t add_After(doubleList_t<data_t> *&list, unsigned num=1, unsigned pos=0)
+ * \fn                  template <class data_t> errAdd_t add_After(doubleList_t<data_t> *list, unsigned num=1, unsigned pos=0)
  * \brief               Add new nodes after a specific position
  * \param   list        List is added new nodes
  * \param   num         Number of nodes will be added
@@ -1241,7 +1241,7 @@ errAdd_t add_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos 
  * \return              Error when using this function
 **/
 template <class data_t>
-errAdd_t add_After(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0, void(*setTask)(data_t &data_) = doNothing)
+errAdd_t add_After(doubleList_t<data_t> *list, unsigned num = 1, unsigned pos = 0, void(*setTask)(data_t &data_) = doNothing)
 {
     #if true
 
@@ -1295,14 +1295,14 @@ errAdd_t add_After(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos =
 
 
 /**
- * \fn                  template <class data_t> errIns_t insert_Head(doubleList_t<data_t> *&list, doubleNode_t<data_t> *&newNode)
+ * \fn                  template <class data_t> errIns_t insert_Head(doubleList_t<data_t> *list, doubleNode_t<data_t> *newNode)
  * \brief               Insert an existing node before the head of list
  * \param   list        List includes the inserted node
  * \param   newNode     Node is inserted
  * \return              Error when using insert functions
 **/
 template <class data_t>
-errIns_t insert_Head(doubleList_t<data_t> *&list, doubleNode_t<data_t> *&newNode)
+errIns_t insert_Head(doubleList_t<data_t> *list, doubleNode_t<data_t> *newNode)
 {
     #if true
 
@@ -1364,14 +1364,14 @@ errIns_t insert_Head(doubleList_t<data_t> *&list, doubleNode_t<data_t> *&newNode
 
 
 /**
- * \fn                  template <class data_t> errIns_t insert_Tail(doubleList_t<data_t> *&list, doubleNode_t<data_t> *&newNode)
+ * \fn                  template <class data_t> errIns_t insert_Tail(doubleList_t<data_t> *list, doubleNode_t<data_t> *newNode)
  * \brief               Insert an existing node after the tail of list
  * \param   list        List includes inserted node
  * \param   newNode     Node is inserted
  * \return              Error when using insert functions
 **/
 template <class data_t>
-errIns_t insert_Tail(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode)
+errIns_t insert_Tail(doubleList_t<data_t> *list, doubleNode_t<data_t> *newNode)
 {
     #if true
 
@@ -1433,7 +1433,7 @@ errIns_t insert_Tail(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode)
 
 
 /**
- * \fn                  template <class data_t> errIns_t insert_Before(doubleList_t<data_t> *&list, doubleNode_t<data_t> *&newNode, unsigned pos = 0)
+ * \fn                  template <class data_t> errIns_t insert_Before(doubleList_t<data_t> *list, doubleNode_t<data_t> *newNode, unsigned pos = 0)
  * \brief               Insert an existing node before specific node in the list
  * \param   list           List includes
  * \param   newNode     Node is inserted
@@ -1441,7 +1441,7 @@ errIns_t insert_Tail(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode)
  * \return              Error when using insert functions
 **/
 template <class data_t>
-errIns_t insert_Before(doubleList_t<data_t> *&list, doubleNode_t<data_t> *&newNode, unsigned pos = 0)
+errIns_t insert_Before(doubleList_t<data_t> *list, doubleNode_t<data_t> *newNode, unsigned pos = 0)
 {
     #if true
 
@@ -1490,7 +1490,7 @@ errIns_t insert_Before(doubleList_t<data_t> *&list, doubleNode_t<data_t> *&newNo
 
 
 /**
- * \fn                  template <class data_t> errIns_t insert_After(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode, unsigned pos = 0)
+ * \fn                  template <class data_t> errIns_t insert_After(doubleList_t<data_t> *list, doubleNode_t<data_t> *newNode, unsigned pos = 0)
  * \brief               Insert an existing node after specific node in the list
  * \param   list        List includes newNode
  * \param   newNode     Node is inserted
@@ -1498,7 +1498,7 @@ errIns_t insert_Before(doubleList_t<data_t> *&list, doubleNode_t<data_t> *&newNo
  * \return              Error when using insert functions
 **/
 template <class data_t>
-errIns_t insert_After(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode, unsigned pos = 0)
+errIns_t insert_After(doubleList_t<data_t> *list, doubleNode_t<data_t> *newNode, unsigned pos = 0)
 {
     #if true
 
@@ -1551,7 +1551,7 @@ errIns_t insert_After(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode
 
 
 /**
- * \fn                  template <class data_t> errIns_t insert_List(doubleNode_t<data_t> *&node1, doubleNode_t<data_t> *&node2, doubleList_t<data_t> *&newList)
+ * \fn                  template <class data_t> errIns_t insert_List(doubleNode_t<data_t> *node1, doubleNode_t<data_t> *node2, doubleList_t<data_t> *newList)
  * \brief               Insert an existing list between node1 and node2, node1 != node2
  * \param   node1       New list is insert after   node 1
  * \param   node2       New list is insert before  node 2
@@ -1559,7 +1559,7 @@ errIns_t insert_After(doubleList_t<data_t> *&list, doubleNode_t<data_t> *newNode
  * \return              Error when using insert functions
 **/
 template <class data_t>
-errIns_t insert_List(doubleNode_t<data_t> *&node1, doubleNode_t<data_t> *&node2, doubleList_t<data_t> *&newList)
+errIns_t insert_List(doubleNode_t<data_t> *node1, doubleNode_t<data_t> *node2, doubleList_t<data_t> *newList)
 {
     #if true
 
@@ -1587,14 +1587,14 @@ errIns_t insert_List(doubleNode_t<data_t> *&node1, doubleNode_t<data_t> *&node2,
 
 
 /**
- * \fn                  template <class data_t> errDel_t delete_Head(doubleList_t<data_t> *&list, unsigned num = 1)
+ * \fn                  template <class data_t> errDel_t delete_Head(doubleList_t<data_t> *list, unsigned num = 1)
  * \brief               Delete first node n times
  * \param   list        List includes deleted nodes
  * \param   num         Number of times that first node is deleted
  * \return              Error when using delete functions
 **/
 template <class data_t>
-errDel_t delete_Head(doubleList_t<data_t> *&list, unsigned num = 1)
+errDel_t delete_Head(doubleList_t<data_t> *list, unsigned num = 1)
 {
     #if true
 
@@ -1662,14 +1662,14 @@ errDel_t delete_Head(doubleList_t<data_t> *&list, unsigned num = 1)
 
 
 /**
- * \fn                  template <class data_t> errDel_t delete_Tail(doubleList_t<data_t> *&list, unsigned num = 1)
+ * \fn                  template <class data_t> errDel_t delete_Tail(doubleList_t<data_t> *list, unsigned num = 1)
  * \brief               Delete last node n times
  * \param   list        List includes
  * \param   num         Number of times that last node is deleted
  * \return              void
 **/
 template <class data_t>
-errDel_t delete_Tail(doubleList_t<data_t> *&list, unsigned num = 1)
+errDel_t delete_Tail(doubleList_t<data_t> *list, unsigned num = 1)
 {
     #if true
 
@@ -1737,7 +1737,7 @@ errDel_t delete_Tail(doubleList_t<data_t> *&list, unsigned num = 1)
 
 
 /**
- * \fn                  template <class data_t> errDel_t delete_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0)
+ * \fn                  template <class data_t> errDel_t delete_Before(doubleList_t<data_t> *list, unsigned num = 1, unsigned pos = 0)
  * \brief               Delete <num> nodes before <pos>th node, don't delete node before head
  * \param   list        List includes deleted nodes
  * \param   num         Number of nodes will be deleted
@@ -1746,7 +1746,7 @@ errDel_t delete_Tail(doubleList_t<data_t> *&list, unsigned num = 1)
 **/
 
 template <class data_t>
-errDel_t delete_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 1)
+errDel_t delete_Before(doubleList_t<data_t> *list, unsigned num = 1, unsigned pos = 1)
 {
     #if true
 
@@ -1834,7 +1834,7 @@ errDel_t delete_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned p
 
 
 /**
- * \fn                  template <class data_t> errDel_t delete_After(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0)
+ * \fn                  template <class data_t> errDel_t delete_After(doubleList_t<data_t> *list, unsigned num = 1, unsigned pos = 0)
  * \brief               Delete <num> nodes after <pos>th node, not delete node after tail
  * \param   list        List includes deleted nodes
  * \param   num         Number of nodes will be deleted
@@ -1842,7 +1842,7 @@ errDel_t delete_Before(doubleList_t<data_t> *&list, unsigned num = 1, unsigned p
  * \return              void
 **/
 template <class data_t>
-errDel_t delete_After(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0)
+errDel_t delete_After(doubleList_t<data_t> *list, unsigned num = 1, unsigned pos = 0)
 {
     #if true
 
@@ -1930,7 +1930,7 @@ errDel_t delete_After(doubleList_t<data_t> *&list, unsigned num = 1, unsigned po
 
 
 /**
- * \fn                  template <class data_t> errDel_t delete_Node(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0)
+ * \fn                  template <class data_t> errDel_t delete_Node(doubleList_t<data_t> *list, unsigned num = 1, unsigned pos = 0)
  * \brief               Delete <pos>th node <num>th times
  * \param   list        List includes deleted nodes
  * \param   num         Number of times deleting node
@@ -1938,7 +1938,7 @@ errDel_t delete_After(doubleList_t<data_t> *&list, unsigned num = 1, unsigned po
  * \return              void
 **/
 template <class data_t>
-errDel_t delete_Node(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos = 0)
+errDel_t delete_Node(doubleList_t<data_t> *list, unsigned num = 1, unsigned pos = 0)
 {
     #if true
 
@@ -1951,13 +1951,13 @@ errDel_t delete_Node(doubleList_t<data_t> *&list, unsigned num = 1, unsigned pos
 
 
 /**
- * \fn                  template <class data_t> errDel_t delete_All(doubleList_t<data_t> *&list)
+ * \fn                  template <class data_t> errDel_t delete_All(doubleList_t<data_t> *list)
  * \brief               Delete all nodes of list
  * \param   list        List includes deleted nodes
  * \return              Errors when using delete functions
 **/
 template <class data_t>
-errDel_t delete_All(doubleList_t<data_t> *&list)
+errDel_t delete_All(doubleList_t<data_t> *list)
 {
     #if true
 
@@ -1996,13 +1996,13 @@ errDel_t delete_All(doubleList_t<data_t> *&list)
 
 
 /**
- * \fn                  template <class data_t> errDel_t delete_List(doubleList_t<data_t> *&list)
+ * \fn                  template <class data_t> errDel_t delete_List(doubleList_t<data_t> *list)
  * \brief               Delete list and all its nodes
  * \param   list        List is deleted
  * \return              Error when using delete functions
 **/
 template <class data_t>
-errDel_t delete_List(doubleList_t<data_t> *&list)
+errDel_t delete_List(doubleList_t<data_t> *list)
 {
     #if true
 
@@ -2220,7 +2220,7 @@ doubleNode_t<data_t> *doubleList_t<data_t>::get_Tail()
 
 
 /**
- * \fn                  template <class data_t> errMov_t move_Next(doubleList_t<data_t> *&list, doubleNode_t<data_t> *&node, unsigned n)
+ * \fn                  template <class data_t> errMov_t move_Next(doubleList_t<data_t> *list, doubleNode_t<data_t> *node, unsigned n)
  * \brief               Move specific node to next node <n> times
  * \param   list        List includes specific node
  * \param   node        Specific node
@@ -2228,7 +2228,7 @@ doubleNode_t<data_t> *doubleList_t<data_t>::get_Tail()
  * \return              Errors when using this function
 **/
 template <class data_t>
-errMov_t move_Next(doubleList_t<data_t> *&list, doubleNode_t<data_t> *&node, unsigned n)
+errMov_t move_Next(doubleList_t<data_t> *list, doubleNode_t<data_t> *node, unsigned n)
 {
     #if true
         if(list == nullptr) {return E_MOV_LIST;}
@@ -2265,13 +2265,13 @@ errMov_t move_Next(doubleList_t<data_t> *&list, doubleNode_t<data_t> *&node, uns
 
 
 /**
- * \fn                  template <class data_t> void link_TailHead(doubleList_t<data_t> *&list)
+ * \fn                  template <class data_t> void link_TailHead(doubleList_t<data_t> *list)
  * \brief               Link the tail of list to the head of list
  * \param   list        List has the tail you want to link to the head
  * \return              void
 **/
 template <class data_t>
-void link_TailHead(doubleList_t<data_t> *&list)
+void link_TailHead(doubleList_t<data_t> *list)
 {
     #if true
 
