@@ -2691,11 +2691,11 @@ void doubleList_stack_t<data_t>::Push(data_t data)
 
         if(this->get_List() == nullptr)
         {
-            this->set_List(create_List());
+            this->set_List(create_List<data_t>());
         }
         
 
-        doubleNode_t<data_t> *node_new = create_Node();
+        doubleNode_t<data_t> *node_new = create_Node<data_t>();
         node_new->data_ = data;
 
         insert_Tail(this->get_List(), node_new);
@@ -2921,11 +2921,11 @@ void doubleList_queue_t<data_t>::Push(data_t data)
 
         if(this->get_List() == nullptr)
         {
-            this->set_List(create_List());
+            this->set_List(create_List<data_t>());
         }
         
 
-        doubleNode_t<data_t> *node_new = create_Node();
+        doubleNode_t<data_t> *node_new = create_Node<data_t>();
         node_new->data_ = data;
 
         insert_Tail(this->get_List(), node_new);
