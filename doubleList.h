@@ -388,10 +388,10 @@ class doubleList_stack_t
 
     /*** Get functions ***/
     public:
-        doubleList_stack_t<data_t> *get_List();
+        doubleList_t<data_t> *get_List();
 
-        unsigned *get_Len();
-        unsigned *get_Cap();
+        unsigned get_Len();
+        unsigned get_Cap();
     
 
     /*** Set functions ***/
@@ -431,10 +431,10 @@ class doubleList_queue_t
 
     /*** Get functions ***/
     public:
-        doubleList_queue_t<data_t> *get_List();
+        doubleList_t<data_t> *get_List();
 
-        unsigned *get_Len();
-        unsigned *get_Cap();
+        unsigned get_Len();
+        unsigned get_Cap();
     
 
     /*** Set functions ***/
@@ -482,10 +482,10 @@ template <class data_t>
 doubleList_t<data_t> *create_List(unsigned num = 0, void(*setTask)(data_t &data_) = doNothing, creMode_t creMode = FORWARD);
 
 template <class data_t>
-doubleList_stack_t<data_t> *create_stack(unsigned cap = 100, unsigned num = 0, void(*setTask)(data_t &data) = doNothing);
+doubleList_stack_t<data_t> *create_Stack(unsigned cap = 100, unsigned num = 0, void(*setTask)(data_t &data) = doNothing);
 
 template <class data_t>
-doubleList_queue_t<data_t> *create_queue(unsigned cap = 100, unsigned num = 0, void(*setTask)(data_t &data) = doNothing);
+doubleList_queue_t<data_t> *create_Queue(unsigned cap = 100, unsigned num = 0, void(*setTask)(data_t &data) = doNothing);
 
 
 
@@ -751,7 +751,7 @@ doubleList_t<data_t> *create_List(unsigned num = 0, void(*setTask)(data_t &data_
 
 
 /**
- * \fn                  template <class data_t> doubleList_stack_t<data_t> *create_stack(unsigned cap = 100, unsigned num = 0, void(*setTask)(data_t &data) = doNothing)
+ * \fn                  template <class data_t> doubleList_stack_t<data_t> *create_Stack(unsigned cap = 100, unsigned num = 0, void(*setTask)(data_t &data) = doNothing)
  * \brief               Create a brand new stack having num nodes
  * \param   cap         Capicity of stack
  * \param   num         Number of nodes will be created
@@ -759,7 +759,7 @@ doubleList_t<data_t> *create_List(unsigned num = 0, void(*setTask)(data_t &data_
  * \return              Address of new stack
 **/
 template <class data_t>
-doubleList_stack_t<data_t> *create_stack(unsigned cap = 100, unsigned num = 0, void(*setTask)(data_t &data) = doNothing)
+doubleList_stack_t<data_t> *create_Stack(unsigned cap = 100, unsigned num = 0, void(*setTask)(data_t &data) = doNothing)
 {
     #if true
 
@@ -784,7 +784,7 @@ doubleList_stack_t<data_t> *create_stack(unsigned cap = 100, unsigned num = 0, v
 
 
 /**
- * \fn                  template <class data_t> doubleList_queue_t<data_t> *create_queue(unsigned cap = 100, unsigned num = 0, void(*setTask)(data_t &data) = doNothing)
+ * \fn                  template <class data_t> doubleList_queue_t<data_t> *create_Queue(unsigned cap = 100, unsigned num = 0, void(*setTask)(data_t &data) = doNothing)
  * \brief               Create a brand new queue having num nodes
  * \param   cap         Capicity of stack
  * \param   num         Number of nodes will be created
@@ -792,7 +792,7 @@ doubleList_stack_t<data_t> *create_stack(unsigned cap = 100, unsigned num = 0, v
  * \return              Address of new stack
 **/
 template <class data_t>
-doubleList_queue_t<data_t> *create_queue(unsigned cap = 100, unsigned num = 0, void(*setTask)(data_t &data) = doNothing)
+doubleList_queue_t<data_t> *create_Queue(unsigned cap = 100, unsigned num = 0, void(*setTask)(data_t &data) = doNothing)
 {
     #if true
 
@@ -966,7 +966,7 @@ doubleList_queue_t<data_t> *copy_Queue(doubleList_queue_t<data_t> *stack, bool(*
 
         if(stack            == nullptr) {return nullptr;}
 
-        doubleList_stack_t<data_t> *queue_new  = new doubleList_stack_t<data_t>();
+        doubleList_queue_t<data_t> *queue_new  = new doubleList_queue_t<data_t>();
         
         queue_new->set_List(copy_List(stack->get_List(), conTask, creMode));
         queue_new->set_Len(stack->get_Len());
@@ -2510,19 +2510,19 @@ template <class data_t>
 doubleList_stack_t<data_t>::doubleList_stack_t<data_t>()
 {
     this->ptr_list_ = nullptr;
-    this->len       = nullptr;
-    this->cap       = nullptr;
+    this->len_      = nullptr;
+    this->cap_      = nullptr;
 }   
 
 
 /**
- * \fn                  template <class data_t> doubleList_stack_t<data_t> *doubleList_stack_t<data_t>::get_List()
+ * \fn                  template <class data_t> doubleList_t<data_t> *doubleList_stack_t<data_t>::get_List()
  * \brief               Get pointer list including nodes
  * \param               void
  * \return              Pointer to list including nodes
 **/
 template <class data_t>
-doubleList_stack_t<data_t> *doubleList_stack_t<data_t>::get_List()
+doubleList_t<data_t> *doubleList_stack_t<data_t>::get_List()
 {
     #if true
 
@@ -2533,34 +2533,34 @@ doubleList_stack_t<data_t> *doubleList_stack_t<data_t>::get_List()
 
 
 /**
- * \fn                  template <class data_t> unsigned *doubleList_stack_t<data_t>::get_Len()
+ * \fn                  template <class data_t> unsigned doubleList_stack_t<data_t>::get_Len()
  * \brief               Get length of stack
  * \param               void
  * \return              Length of stack
 **/
 template <class data_t>
-unsigned *doubleList_stack_t<data_t>::get_Len()
+unsigned doubleList_stack_t<data_t>::get_Len()
 {
     #if true
 
-        return this->ptr_len_;
+        return *(this->len_);
     
     #endif
 }
 
 
 /**
- * \fn                  template <class data_t> unsigned *doubleList_stack_t<data_t>::get_Cap()
+ * \fn                  template <class data_t> unsigned doubleList_stack_t<data_t>::get_Cap()
  * \brief               Get capicity of stack
  * \param               void
  * \return              Capicity of stack
 **/
 template <class data_t>
-unsigned *doubleList_stack_t<data_t>::get_Cap()
+unsigned doubleList_stack_t<data_t>::get_Cap()
 {
     #if true
 
-        return this->ptr_cap_;
+        return *(this->cap_);
     
     #endif
 }
@@ -2723,8 +2723,8 @@ template <class data_t>
 doubleList_queue_t<data_t>::doubleList_queue_t<data_t>()
 {
     this->ptr_list_ = nullptr;
-    this->len       = nullptr;
-    this->cap       = nullptr;
+    this->len_      = nullptr;
+    this->cap_      = nullptr;
 }   
 
 
@@ -2735,7 +2735,7 @@ doubleList_queue_t<data_t>::doubleList_queue_t<data_t>()
  * \return              Pointer to list including nodes
 **/
 template <class data_t>
-doubleList_queue_t<data_t> *doubleList_queue_t<data_t>::get_List()
+doubleList_t<data_t> *doubleList_queue_t<data_t>::get_List()
 {
     #if true
 
@@ -2746,34 +2746,34 @@ doubleList_queue_t<data_t> *doubleList_queue_t<data_t>::get_List()
 
 
 /**
- * \fn                  template <class data_t> unsigned *doubleList_queue_t<data_t>::get_Len()
+ * \fn                  template <class data_t> unsigned doubleList_queue_t<data_t>::get_Len()
  * \brief               Get length of queue
  * \param               void
  * \return              Length of queue
 **/
 template <class data_t>
-unsigned *doubleList_queue_t<data_t>::get_Len()
+unsigned doubleList_queue_t<data_t>::get_Len()
 {
     #if true
 
-        return this->ptr_len_;
+        return *(this->len_);
     
     #endif
 }
 
 
 /**
- * \fn                  template <class data_t> unsigned *doubleList_queue_t<data_t>::get_Cap()
+ * \fn                  template <class data_t> unsigned doubleList_queue_t<data_t>::get_Cap()
  * \brief               Get capicity of queue
  * \param               void
  * \return              Capicity of queue
 **/
 template <class data_t>
-unsigned *doubleList_queue_t<data_t>::get_Cap()
+unsigned doubleList_queue_t<data_t>::get_Cap()
 {
     #if true
 
-        return this->ptr_cap_;
+        return *(this->cap_);
     
     #endif
 }
